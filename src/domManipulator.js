@@ -76,6 +76,13 @@ const domManipulator = (() => {
     const priorityFieldHeading = Object.assign(document.createElement('h1'), {
       textContent: 'Priority',
     });
+
+    const priorityFieldLowWrapper = Object.assign(
+      document.createElement('div'),
+      {
+        classList: 'radiowrapper',
+      }
+    );
     const priorityFieldLabelLow = Object.assign(
       document.createElement('label'),
       {
@@ -92,6 +99,17 @@ const domManipulator = (() => {
         type: 'radio',
         textContent: 'Low',
         value: 'Low',
+      }
+    );
+    priorityFieldLowWrapper.append(
+      priorityFieldLabelLow,
+      priorityFieldInputLow
+    );
+
+    const priorityFieldNormalWrapper = Object.assign(
+      document.createElement('div'),
+      {
+        classList: 'radiowrapper',
       }
     );
     const priorityFieldLabelNormal = Object.assign(
@@ -112,6 +130,17 @@ const domManipulator = (() => {
         value: 'Normal',
       }
     );
+    priorityFieldNormalWrapper.append(
+      priorityFieldLabelNormal,
+      priorityFieldInputNormal
+    );
+
+    const priorityFieldHighWrapper = Object.assign(
+      document.createElement('div'),
+      {
+        classList: 'radiowrapper',
+      }
+    );
     const priorityFieldLabelHigh = Object.assign(
       document.createElement('label'),
       {
@@ -130,14 +159,16 @@ const domManipulator = (() => {
         value: 'High',
       }
     );
-    priorityFieldWrapper.append(
-      priorityFieldHeading,
-      priorityFieldLabelLow,
-      priorityFieldInputLow,
-      priorityFieldLabelNormal,
-      priorityFieldInputNormal,
+    priorityFieldHighWrapper.append(
       priorityFieldLabelHigh,
       priorityFieldInputHigh
+    );
+
+    priorityFieldWrapper.append(
+      priorityFieldHeading,
+      priorityFieldLowWrapper,
+      priorityFieldNormalWrapper,
+      priorityFieldHighWrapper
     );
 
     const submitNewProjectWrapper = document.createElement('div');
@@ -152,6 +183,13 @@ const domManipulator = (() => {
     );
     submitNewProjectWrapper.append(submitNewProjectButton);
 
+    createProjectForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      console.log('refresh blocked');
+      const content = document.getElementById('content');
+      const child = document.getElementById('createprojectblocker');
+      content.removeChild(child);
+    });
     createProjectForm.append(
       nameFieldWrapper,
       descriptionFieldWrapper,

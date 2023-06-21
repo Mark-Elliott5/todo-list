@@ -60,6 +60,11 @@ html, body {
     width: 100%;
 }
 
+.radiowrapper {
+    display: flex;
+    margin: 4px 0px;
+}
+
 footer, header {
     width: 100%;
     text-align: center;
