@@ -225,8 +225,24 @@ const domManipulator = (() => {
       textContent: 'Search',
     });
     searchbarWrapper.appendChild(searchHeading);
-    const projectBtnWrapper = Object.assign(document.createElement('div'), {
-      id: 'projectbtnwrapper',
+    const searchbarForm = Object.assign(document.createElement('form'), {
+      id: 'searchbarform',
+    });
+    const searchbar = Object.assign(document.createElement('input'), {
+      id: 'searchbar',
+      placeholder: '   Search Projects',
+      ariaLabel: 'Search Query',
+    });
+    searchbarForm.appendChild(searchbar);
+    searchbarWrapper.append(searchbarForm);
+    const listOfProjects = Object.assign(document.createElement('div'), {
+      id: 'projectlist',
+    });
+    const projectListWrapper = Object.assign(document.createElement('div'), {
+      id: 'projectlistwrapper',
+    });
+    const projectListHeading = Object.assign(document.createElement('h2'), {
+      textContent: 'Projects',
     });
     const createProjectButton = Object.assign(
       document.createElement('button'),
@@ -236,31 +252,8 @@ const domManipulator = (() => {
       }
     );
     createProjectButton.addEventListener('click', createNewProject);
-    const deleteProjectButton = Object.assign(
-      document.createElement('button'),
-      {
-        id: 'deleteprojectbutton',
-        innerText: '-',
-      }
-    );
-    projectBtnWrapper.append(createProjectButton, deleteProjectButton);
-    const searchbarForm = Object.assign(document.createElement('form'), {
-      id: 'searchbarform',
-    });
-    const searchbar = Object.assign(document.createElement('input'), {
-      id: 'searchbar',
-      placeholder: 'Search Projects',
-      ariaLabel: 'Search Query',
-    });
-    searchbarForm.appendChild(searchbar);
-    searchbarWrapper.append(searchbarForm, projectBtnWrapper);
-    const listOfProjects = Object.assign(document.createElement('div'), {
-      id: 'projectlist',
-    });
-    const projectListHeading = Object.assign(document.createElement('h2'), {
-      textContent: 'Projects',
-    });
-    listOfProjects.appendChild(projectListHeading);
+    projectListWrapper.append(projectListHeading, createProjectButton);
+    listOfProjects.appendChild(projectListWrapper);
     sidebar.append(searchbarWrapper, listOfProjects);
 
     // project pane
