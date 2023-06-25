@@ -1,29 +1,32 @@
 import Icon from './images/github-mark-white.png';
 
 const domManipulator = (() => {
-  const createNewProject = () => {
-    console.log('create project');
+  const createNew = (e) => {
+    const text = e.target.name;
+    console.log(`create new ${text}`);
     const createProjectBlocker = Object.assign(document.createElement('div'), {
-      id: 'createprojectblocker',
+      id: `createblocker`,
       classList: 'blocker',
     });
     const createProjectBox = Object.assign(document.createElement('div'), {
-      id: 'createprojectbox',
+      id: `createbox`,
+      classList: 'createbox',
     });
     const createProjectHeading = Object.assign(document.createElement('h1'), {
-      textContent: 'Create a New Project',
+      textContent: `Create a New ${text}`,
     });
     const createProjectForm = Object.assign(document.createElement('form'), {
-      id: 'createprojectform',
+      id: `create${text.toLowerCase()}form`,
+      classList: 'createformblocker',
     });
 
     const nameFieldWrapper = document.createElement('div');
     const nameFieldLabel = Object.assign(document.createElement('label'), {
-      for: 'projectname',
-      textContent: 'Project Name',
+      for: `${text.toLowerCase()}name`,
+      textContent: `${text} Name`,
     });
     const nameFieldInput = Object.assign(document.createElement('input'), {
-      id: 'projectname',
+      id: `${text}name`,
       name: 'name',
       required: true,
       maxLength: '40',
@@ -36,14 +39,14 @@ const domManipulator = (() => {
     const descriptionFieldLabel = Object.assign(
       document.createElement('label'),
       {
-        for: 'projectdescription',
+        for: `${text.toLowerCase()}description`,
         textContent: 'Description',
       }
     );
     const descriptionFieldInput = Object.assign(
       document.createElement('input'),
       {
-        id: 'projectdescription',
+        id: `${text}.toLowerCase}description`,
         name: 'description',
         required: true,
         maxLength: '40',
@@ -57,11 +60,11 @@ const domManipulator = (() => {
 
     const duedateFieldWrapper = document.createElement('div');
     const duedateFieldLabel = Object.assign(document.createElement('label'), {
-      for: 'projectduedate',
+      for: `${text.toLowerCase()}duedate`,
       textContent: 'Due Date',
     });
     const duedateFieldInput = Object.assign(document.createElement('input'), {
-      id: 'projectduedate',
+      id: `${text.toLowerCase()}duedate`,
       name: 'duedate',
       required: true,
       maxLength: '40',
@@ -82,14 +85,14 @@ const domManipulator = (() => {
     const priorityFieldLabelLow = Object.assign(
       document.createElement('label'),
       {
-        for: 'projectprioritylow',
+        for: `${text.toLowerCase()}prioritylow`,
         textContent: 'Low',
       }
     );
     const priorityFieldInputLow = Object.assign(
       document.createElement('input'),
       {
-        id: 'projectprioritylow',
+        id: `${text.toLowerCase()}prioritylow`,
         name: 'priority',
         required: true,
         type: 'radio',
@@ -110,14 +113,14 @@ const domManipulator = (() => {
     const priorityFieldLabelNormal = Object.assign(
       document.createElement('label'),
       {
-        for: 'projectprioritynormal',
+        for: `${text.toLowerCase()}prioritynormal`,
         textContent: 'Normal',
       }
     );
     const priorityFieldInputNormal = Object.assign(
       document.createElement('input'),
       {
-        id: 'projectprioritynormal',
+        id: `${text.toLowerCase()}prioritynormal`,
         name: 'priority',
         required: true,
         type: 'radio',
@@ -138,14 +141,14 @@ const domManipulator = (() => {
     const priorityFieldLabelHigh = Object.assign(
       document.createElement('label'),
       {
-        for: 'projectpriorityhigh',
+        for: `${text.toLowerCase()}priorityhigh`,
         textContent: 'High',
       }
     );
     const priorityFieldInputHigh = Object.assign(
       document.createElement('input'),
       {
-        id: 'projectpriorityhigh',
+        id: `${text.toLowerCase()}priorityhigh`,
         name: 'priority',
         required: true,
         type: 'radio',
@@ -176,12 +179,11 @@ const domManipulator = (() => {
     );
     submitNewProjectWrapper.append(submitNewProjectButton);
 
-    createProjectForm.addEventListener('submit', (e) => {
-      e.preventDefault();
+    createProjectForm.addEventListener('submit', (e1) => {
+      e1.preventDefault();
       console.log('refresh blocked');
-      const content = document.getElementById('content');
-      const child = document.getElementById('createprojectblocker');
-      content.removeChild(child);
+      const box = document.getElementById('createblocker');
+      box.remove();
     });
     createProjectForm.append(
       nameFieldWrapper,
@@ -193,19 +195,16 @@ const domManipulator = (() => {
 
     createProjectBox.append(createProjectHeading, createProjectForm);
     createProjectBlocker.append(createProjectBox);
-    createProjectBox.addEventListener('click', (e) => {
-      e.stopPropagation();
+    createProjectBox.addEventListener('click', (e2) => {
+      e2.stopPropagation();
     });
     createProjectBlocker.addEventListener('click', () => {
-      const content = document.getElementById('content');
-      const child = document.getElementById('createprojectblocker');
-      content.removeChild(child);
+      const blocker = document.getElementById(`createblocker`);
+      blocker.remove();
     });
     const content = document.getElementById('content');
     content.append(createProjectBlocker);
   };
-
-  const createNewTask = () => {};
 
   const pageLoad = () => {
     // sidebar
@@ -233,8 +232,9 @@ const domManipulator = (() => {
       id: 'createtaskbutton',
       innerText: '+',
       classList: 'createbutton',
+      name: 'Task',
     });
-    createTaskButton.addEventListener('click', createNewTask);
+    createTaskButton.addEventListener('click', createNew);
     tasksListHeaderWrapper.append(tasksHeader, createTaskButton);
     tasksList.append(tasksListHeaderWrapper);
 
@@ -268,9 +268,10 @@ const domManipulator = (() => {
         id: 'createprojectbutton',
         innerText: '+',
         classList: 'createbutton',
+        name: 'Project',
       }
     );
-    createProjectButton.addEventListener('click', createNewProject);
+    createProjectButton.addEventListener('click', createNew);
     projectListHeaderWrapper.append(projectListHeading, createProjectButton);
     projectList.appendChild(projectListHeaderWrapper);
 
