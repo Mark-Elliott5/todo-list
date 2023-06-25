@@ -74,7 +74,7 @@ html, body {
     backdrop-filter: blur(1px);
 }
 
-#createprojectbox {
+#createbox {
     position: fixed;
     top: 50%;
     left: 50%;
@@ -85,13 +85,13 @@ html, body {
     padding: 1rem 5rem;
 }
 
-#createprojectbox form {
+#createbox form {
     display: flex;
     flex-direction: column;
     gap: 1rem;
 }
 
-#createprojectbox form div input, #createprojectbox form div button {
+#createbox form div input, #createbox form div button {
     width: 100%;
 }
 
