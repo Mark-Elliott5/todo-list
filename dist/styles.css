@@ -1,3 +1,15 @@
+:root {
+    --primary-color: #00A6ED;
+    --accent-color: #0D2C54;
+    --backdrop-color: white;
+    --shading-color: #f0f0f0;
+    --text-color: black;
+    --subtext-color: grey;
+    --low-priority: #7FB800;
+    --normal-priority: #FFB400;
+    --high-priority: #F6511D;
+}
+
 html, body {
     margin: 0;
 }
@@ -17,8 +29,12 @@ html, body {
 
 #sidebar {
     grid-column: 1;
-    background: #f0f0f0;
+    background: var(--shading-color);
     padding: 0px 8px;
+}
+
+#sidebar form {
+    margin: 10px 0px;
 }
 
 #searchbar {
@@ -31,16 +47,16 @@ html, body {
     margin: 0px 0px 10px 0px;
 }
 
-#projectlistwrapper {
+.listwrapper {
     display: flex;
     justify-content: space-between;
 }
 
-#projectlistwrapper h2 {
+.listwrapper h2 {
     margin: 0px;
 }
 
-#projectlistwrapper button {
+.listwrapper button {
     border-radius: 12px;
     width: 25px;
     height: 25px;
@@ -87,21 +103,21 @@ html, body {
 footer, header {
     width: 100%;
     text-align: center;
+    background: var(--primary-color);
+    color: var(--backdrop-color);
 }
 
 header {
     margin: 0px;
     font-size: 64px;
-    background: #00A6ED;
     text-align: left;
     padding: 0px 0px 0px 10px;
-    color: white;
 }
 
 footer {
-    margin-top: 0px;
-    margin-bottom: 16px;
+    margin: 0;
     font-size: 16px;
+    padding: 6px;
 }
 
 footer > a {

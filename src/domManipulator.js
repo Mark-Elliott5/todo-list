@@ -7,15 +7,12 @@ const domManipulator = (() => {
       id: 'createprojectblocker',
       classList: 'blocker',
     });
-
     const createProjectBox = Object.assign(document.createElement('div'), {
       id: 'createprojectbox',
     });
-
     const createProjectHeading = Object.assign(document.createElement('h1'), {
       textContent: 'Create a New Project',
     });
-
     const createProjectForm = Object.assign(document.createElement('form'), {
       id: 'createprojectform',
     });
@@ -76,7 +73,6 @@ const domManipulator = (() => {
     const priorityFieldHeading = Object.assign(document.createElement('h1'), {
       textContent: 'Priority',
     });
-
     const priorityFieldLowWrapper = Object.assign(
       document.createElement('div'),
       {
@@ -105,7 +101,6 @@ const domManipulator = (() => {
       priorityFieldLabelLow,
       priorityFieldInputLow
     );
-
     const priorityFieldNormalWrapper = Object.assign(
       document.createElement('div'),
       {
@@ -134,7 +129,6 @@ const domManipulator = (() => {
       priorityFieldLabelNormal,
       priorityFieldInputNormal
     );
-
     const priorityFieldHighWrapper = Object.assign(
       document.createElement('div'),
       {
@@ -163,7 +157,6 @@ const domManipulator = (() => {
       priorityFieldLabelHigh,
       priorityFieldInputHigh
     );
-
     priorityFieldWrapper.append(
       priorityFieldHeading,
       priorityFieldLowWrapper,
@@ -212,19 +205,39 @@ const domManipulator = (() => {
     content.append(createProjectBlocker);
   };
 
+  const createNewTask = () => {};
+
   const pageLoad = () => {
     // sidebar
     const content = document.getElementById('content');
     const sidebar = Object.assign(document.createElement('div'), {
       id: 'sidebar',
     });
-    const searchbarWrapper = Object.assign(document.createElement('div'), {
-      id: 'searchbarwrapper',
+
+    const tasksList = Object.assign(document.createElement('div'), {
+      id: 'taskslist',
     });
-    const searchHeading = Object.assign(document.createElement('h2'), {
-      textContent: 'Search',
+    const tasksListHeaderWrapper = Object.assign(
+      document.createElement('div'),
+      {
+        id: 'taskslistheaderwrapper',
+        classList: 'listwrapper',
+      }
+    );
+    const tasksHeader = Object.assign(document.createElement('h2'), {
+      id: 'tasksheader',
+      classList: 'header',
+      textContent: 'Tasks',
     });
-    searchbarWrapper.appendChild(searchHeading);
+    const createTaskButton = Object.assign(document.createElement('button'), {
+      id: 'createtaskbutton',
+      innerText: '+',
+      classList: 'createbutton',
+    });
+    createTaskButton.addEventListener('click', createNewTask);
+    tasksListHeaderWrapper.append(tasksHeader, createTaskButton);
+    tasksList.append(tasksListHeaderWrapper);
+
     const searchbarForm = Object.assign(document.createElement('form'), {
       id: 'searchbarform',
     });
@@ -234,27 +247,34 @@ const domManipulator = (() => {
       ariaLabel: 'Search Query',
     });
     searchbarForm.appendChild(searchbar);
-    searchbarWrapper.append(searchbarForm);
-    const listOfProjects = Object.assign(document.createElement('div'), {
+
+    const projectList = Object.assign(document.createElement('div'), {
       id: 'projectlist',
     });
-    const projectListWrapper = Object.assign(document.createElement('div'), {
-      id: 'projectlistwrapper',
-    });
+    const projectListHeaderWrapper = Object.assign(
+      document.createElement('div'),
+      {
+        id: 'projectlistheaderwrapper',
+        classList: 'listwrapper',
+      }
+    );
     const projectListHeading = Object.assign(document.createElement('h2'), {
       textContent: 'Projects',
+      classList: 'header',
     });
     const createProjectButton = Object.assign(
       document.createElement('button'),
       {
         id: 'createprojectbutton',
         innerText: '+',
+        classList: 'createbutton',
       }
     );
     createProjectButton.addEventListener('click', createNewProject);
-    projectListWrapper.append(projectListHeading, createProjectButton);
-    listOfProjects.appendChild(projectListWrapper);
-    sidebar.append(searchbarWrapper, listOfProjects);
+    projectListHeaderWrapper.append(projectListHeading, createProjectButton);
+    projectList.appendChild(projectListHeaderWrapper);
+
+    sidebar.append(tasksList, searchbarForm, projectList);
 
     // project pane
     const projectPane = Object.assign(document.createElement('div'), {
