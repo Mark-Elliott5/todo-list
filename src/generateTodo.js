@@ -1,27 +1,38 @@
-const Todo = (title, description, dueDate, priority) => {
+const Todo = (title, description, duedate, priority, type) => {
   const setTitle = (input) => {
-    obj.title = input;
+    obj.name = input;
   };
-  const setDesc = () => {};
-  const setDueDate = () => {};
-  const setPriority = () => {};
+  const setDescription = (input) => {
+    obj.description = input;
+  };
+  const setDueDate = (input) => {
+    obj.duedate = input;
+  };
+  const setPriority = () => {
+    obj.priority = input;
+  };
   const getTitle = () => obj.title;
-  const getDesc = () => obj.description;
-  const getDueDate = () => obj.dueDate;
+  const getDescription = () => obj.description;
+  const getDueDate = () => obj.duedate;
   const getPriority = () => obj.priority;
+  const getID = () => obj.id;
   const obj = {
     title,
     description,
-    dueDate,
+    duedate,
     priority,
+    id,
     setTitle,
-    setDesc,
+    setDescription,
     setDueDate,
     setPriority,
     getTitle,
-    getDesc,
+    getDescription,
     getDueDate,
     getPriority,
+    getID,
   };
   return obj;
 };
+
+export default Todo;

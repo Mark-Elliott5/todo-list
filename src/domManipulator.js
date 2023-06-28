@@ -1,9 +1,12 @@
 import Icon from './images/github-mark-white.png';
+import Todo from './generateTodo';
+import Project from './generateProject';
 
 const domManipulator = (() => {
+  let id = 0;
   const createNew = (e) => {
-    const text = e.target.name;
-    console.log(`create new ${text}`);
+    const type = e.target.name;
+    console.log(`create new ${type}`);
     const createProjectBlocker = Object.assign(document.createElement('div'), {
       id: `createblocker`,
       classList: 'blocker',
@@ -13,40 +16,40 @@ const domManipulator = (() => {
       classList: 'createbox',
     });
     const createProjectHeading = Object.assign(document.createElement('h1'), {
-      textContent: `Create a New ${text}`,
+      textContent: `Create a New ${type}`,
     });
     const createProjectForm = Object.assign(document.createElement('form'), {
-      id: `create${text.toLowerCase()}form`,
+      id: `createform`,
       classList: 'createformblocker',
     });
 
-    const nameFieldWrapper = document.createElement('div');
-    const nameFieldLabel = Object.assign(document.createElement('label'), {
-      for: `${text.toLowerCase()}name`,
-      textContent: `${text} Name`,
+    const titleFieldWrapper = document.createElement('div');
+    const titleFieldLabel = Object.assign(document.createElement('label'), {
+      for: `${type.toLowerCase()}name`,
+      textContent: `${type} Name`,
     });
-    const nameFieldInput = Object.assign(document.createElement('input'), {
-      id: `${text}name`,
-      name: 'name',
+    const titleFieldInput = Object.assign(document.createElement('input'), {
+      id: `${type}title`,
+      name: 'title',
       required: true,
       maxLength: '40',
       minLength: '5',
       type: 'text',
     });
-    nameFieldWrapper.append(nameFieldLabel, nameFieldInput);
+    titleFieldWrapper.append(titleFieldLabel, titleFieldInput);
 
     const descriptionFieldWrapper = document.createElement('div');
     const descriptionFieldLabel = Object.assign(
       document.createElement('label'),
       {
-        for: `${text.toLowerCase()}description`,
+        for: `${type.toLowerCase()}description`,
         textContent: 'Description',
       }
     );
     const descriptionFieldInput = Object.assign(
       document.createElement('input'),
       {
-        id: `${text}.toLowerCase}description`,
+        id: `${type.toLowerCase()}description`,
         name: 'description',
         required: true,
         maxLength: '40',
@@ -60,11 +63,11 @@ const domManipulator = (() => {
 
     const duedateFieldWrapper = document.createElement('div');
     const duedateFieldLabel = Object.assign(document.createElement('label'), {
-      for: `${text.toLowerCase()}duedate`,
+      for: `${type.toLowerCase()}duedate`,
       textContent: 'Due Date',
     });
     const duedateFieldInput = Object.assign(document.createElement('input'), {
-      id: `${text.toLowerCase()}duedate`,
+      id: `${type.toLowerCase()}duedate`,
       name: 'duedate',
       required: true,
       maxLength: '40',
@@ -85,19 +88,19 @@ const domManipulator = (() => {
     const priorityFieldLabelLow = Object.assign(
       document.createElement('label'),
       {
-        for: `${text.toLowerCase()}prioritylow`,
+        for: `${type.toLowerCase()}prioritylow`,
         textContent: 'Low',
       }
     );
     const priorityFieldInputLow = Object.assign(
       document.createElement('input'),
       {
-        id: `${text.toLowerCase()}prioritylow`,
+        id: `${type.toLowerCase()}prioritylow`,
         name: 'priority',
         required: true,
         type: 'radio',
         textContent: 'Low',
-        value: 'Low',
+        value: 'low',
       }
     );
     priorityFieldLowWrapper.append(
@@ -113,19 +116,19 @@ const domManipulator = (() => {
     const priorityFieldLabelNormal = Object.assign(
       document.createElement('label'),
       {
-        for: `${text.toLowerCase()}prioritynormal`,
+        for: `${type.toLowerCase()}prioritynormal`,
         textContent: 'Normal',
       }
     );
     const priorityFieldInputNormal = Object.assign(
       document.createElement('input'),
       {
-        id: `${text.toLowerCase()}prioritynormal`,
+        id: `${type.toLowerCase()}prioritynormal`,
         name: 'priority',
         required: true,
         type: 'radio',
         textContent: 'Normal',
-        value: 'Normal',
+        value: 'normal',
       }
     );
     priorityFieldNormalWrapper.append(
@@ -141,19 +144,19 @@ const domManipulator = (() => {
     const priorityFieldLabelHigh = Object.assign(
       document.createElement('label'),
       {
-        for: `${text.toLowerCase()}priorityhigh`,
+        for: `${type.toLowerCase()}priorityhigh`,
         textContent: 'High',
       }
     );
     const priorityFieldInputHigh = Object.assign(
       document.createElement('input'),
       {
-        id: `${text.toLowerCase()}priorityhigh`,
+        id: `${type.toLowerCase()}priorityhigh`,
         name: 'priority',
         required: true,
         type: 'radio',
         textContent: 'High',
-        value: 'High',
+        value: 'high',
       }
     );
     priorityFieldHighWrapper.append(
@@ -182,11 +185,23 @@ const domManipulator = (() => {
     createProjectForm.addEventListener('submit', (e1) => {
       e1.preventDefault();
       console.log('refresh blocked');
+      const submission = new FormData(e1.target);
+      const title = submission.get('title');
+      const description = submission.get('description');
+      const duedate = submission.get('duedate');
+      const priority = submission.get('priority');
+      if (type === 'project') {
+        Project(title, description, duedate, priority, id++);
+        console.log(Project(title, description, duedate, priority, id++));
+      } if (type === 'todo') {
+        Todo(title, description, duedate, priority, id++);  
+      }
       const box = document.getElementById('createblocker');
       box.remove();
     });
+
     createProjectForm.append(
-      nameFieldWrapper,
+      titleFieldWrapper,
       descriptionFieldWrapper,
       duedateFieldWrapper,
       priorityFieldWrapper,
@@ -213,16 +228,13 @@ const domManipulator = (() => {
       id: 'sidebar',
     });
 
-    const tasksList = Object.assign(document.createElement('div'), {
-      id: 'taskslist',
+    const taskList = Object.assign(document.createElement('div'), {
+      id: 'tasklist',
     });
-    const tasksListHeaderWrapper = Object.assign(
-      document.createElement('div'),
-      {
-        id: 'taskslistheaderwrapper',
-        classList: 'listwrapper',
-      }
-    );
+    const taskListHeaderWrapper = Object.assign(document.createElement('div'), {
+      id: 'tasklistheaderwrapper',
+      classList: 'listwrapper',
+    });
     const tasksHeader = Object.assign(document.createElement('h2'), {
       id: 'tasksheader',
       classList: 'header',
@@ -232,11 +244,11 @@ const domManipulator = (() => {
       id: 'createtaskbutton',
       innerText: '+',
       classList: 'createbutton',
-      name: 'Task',
+      name: 'task',
     });
     createTaskButton.addEventListener('click', createNew);
-    tasksListHeaderWrapper.append(tasksHeader, createTaskButton);
-    tasksList.append(tasksListHeaderWrapper);
+    taskListHeaderWrapper.append(tasksHeader, createTaskButton);
+    taskList.append(taskListHeaderWrapper);
 
     const searchbarForm = Object.assign(document.createElement('form'), {
       id: 'searchbarform',
@@ -268,14 +280,14 @@ const domManipulator = (() => {
         id: 'createprojectbutton',
         innerText: '+',
         classList: 'createbutton',
-        name: 'Project',
+        name: 'project',
       }
     );
     createProjectButton.addEventListener('click', createNew);
     projectListHeaderWrapper.append(projectListHeading, createProjectButton);
     projectList.appendChild(projectListHeaderWrapper);
 
-    sidebar.append(tasksList, searchbarForm, projectList);
+    sidebar.append(taskList, searchbarForm, projectList);
 
     // project pane
     const projectPane = Object.assign(document.createElement('div'), {
