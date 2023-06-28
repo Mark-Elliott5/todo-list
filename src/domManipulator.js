@@ -190,11 +190,12 @@ const domManipulator = (() => {
       const description = submission.get('description');
       const duedate = submission.get('duedate');
       const priority = submission.get('priority');
-      if (type === 'project') {
+      if (type === 'Project') {
         Project(title, description, duedate, priority, id++);
         console.log(Project(title, description, duedate, priority, id++));
-      } if (type === 'todo') {
-        Todo(title, description, duedate, priority, id++);  
+      } if (type === 'Todo') {
+        Todo(title, description, duedate, priority, id++);
+        console.log(Todo(title, description, duedate, priority, id++));  
       }
       const box = document.getElementById('createblocker');
       box.remove();
@@ -228,27 +229,27 @@ const domManipulator = (() => {
       id: 'sidebar',
     });
 
-    const taskList = Object.assign(document.createElement('div'), {
-      id: 'tasklist',
+    const todoList = Object.assign(document.createElement('div'), {
+      id: 'todolist',
     });
-    const taskListHeaderWrapper = Object.assign(document.createElement('div'), {
-      id: 'tasklistheaderwrapper',
+    const todoListHeaderWrapper = Object.assign(document.createElement('div'), {
+      id: 'todolistheaderwrapper',
       classList: 'listwrapper',
     });
-    const tasksHeader = Object.assign(document.createElement('h2'), {
-      id: 'tasksheader',
+    const todosHeader = Object.assign(document.createElement('h2'), {
+      id: 'todosheader',
       classList: 'header',
-      textContent: 'Tasks',
+      textContent: 'Todos',
     });
-    const createTaskButton = Object.assign(document.createElement('button'), {
-      id: 'createtaskbutton',
+    const createTodoButton = Object.assign(document.createElement('button'), {
+      id: 'createtodobutton',
       innerText: '+',
       classList: 'createbutton',
-      name: 'task',
+      name: 'Todo',
     });
-    createTaskButton.addEventListener('click', createNew);
-    taskListHeaderWrapper.append(tasksHeader, createTaskButton);
-    taskList.append(taskListHeaderWrapper);
+    createTodoButton.addEventListener('click', createNew);
+    todoListHeaderWrapper.append(todosHeader, createTodoButton);
+    todoList.append(todoListHeaderWrapper);
 
     const searchbarForm = Object.assign(document.createElement('form'), {
       id: 'searchbarform',
@@ -280,14 +281,14 @@ const domManipulator = (() => {
         id: 'createprojectbutton',
         innerText: '+',
         classList: 'createbutton',
-        name: 'project',
+        name: 'Project',
       }
     );
     createProjectButton.addEventListener('click', createNew);
     projectListHeaderWrapper.append(projectListHeading, createProjectButton);
     projectList.appendChild(projectListHeaderWrapper);
 
-    sidebar.append(taskList, searchbarForm, projectList);
+    sidebar.append(todoList, searchbarForm, projectList);
 
     // project pane
     const projectPane = Object.assign(document.createElement('div'), {

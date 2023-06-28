@@ -1,4 +1,4 @@
-const Todo = (title, description, duedate, priority, type) => {
+const Todo = (title, description, duedate, priority, id) => {
   const setTitle = (input) => {
     obj.name = input;
   };
