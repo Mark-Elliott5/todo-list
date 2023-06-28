@@ -17,6 +17,7 @@ const domManipulator = (() => {
     });
     const createProjectHeading = Object.assign(document.createElement('h1'), {
       textContent: `Create a New ${type}`,
+      style: 'margin-top: 0;'
     });
     const createProjectForm = Object.assign(document.createElement('form'), {
       id: `createform`,
@@ -78,6 +79,9 @@ const domManipulator = (() => {
     const priorityFieldWrapper = document.createElement('div');
     const priorityFieldHeading = Object.assign(document.createElement('h1'), {
       textContent: 'Priority',
+    });
+    const priorityFieldFlexWrapper = Object.assign(document.createElement('div'), {
+      classList: 'priorityfieldflexwrapper',
     });
     const priorityFieldLowWrapper = Object.assign(
       document.createElement('div'),
@@ -163,11 +167,14 @@ const domManipulator = (() => {
       priorityFieldLabelHigh,
       priorityFieldInputHigh
     );
-    priorityFieldWrapper.append(
-      priorityFieldHeading,
+    priorityFieldFlexWrapper.append(
       priorityFieldLowWrapper,
       priorityFieldNormalWrapper,
       priorityFieldHighWrapper
+    );
+    priorityFieldWrapper.append(
+      priorityFieldHeading,
+      priorityFieldFlexWrapper
     );
 
     const submitNewProjectWrapper = document.createElement('div');
