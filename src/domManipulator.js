@@ -229,8 +229,8 @@ const domManipulator = (() => {
       id: 'sidebar',
     });
 
-    const todoList = Object.assign(document.createElement('div'), {
-      id: 'todolist',
+    const todoListWrapper = Object.assign(document.createElement('div'), {
+      id: 'todolistwrapper',
     });
     const todoListHeaderWrapper = Object.assign(document.createElement('div'), {
       id: 'todolistheaderwrapper',
@@ -241,6 +241,9 @@ const domManipulator = (() => {
       classList: 'header',
       textContent: 'Todos',
     });
+    const todoList = Object.assign(document.createElement('div'), {
+      id: 'todolist',
+    });
     const createTodoButton = Object.assign(document.createElement('button'), {
       id: 'createtodobutton',
       innerText: '+',
@@ -249,7 +252,7 @@ const domManipulator = (() => {
     });
     createTodoButton.addEventListener('click', createNew);
     todoListHeaderWrapper.append(todosHeader, createTodoButton);
-    todoList.append(todoListHeaderWrapper);
+    todoListWrapper.append(todoListHeaderWrapper, todoList);
 
     const searchbarForm = Object.assign(document.createElement('form'), {
       id: 'searchbarform',
@@ -286,9 +289,9 @@ const domManipulator = (() => {
     );
     createProjectButton.addEventListener('click', createNew);
     projectListHeaderWrapper.append(projectListHeading, createProjectButton);
-    projectList.appendChild(projectListHeaderWrapper);
+    projectList.append(projectListHeaderWrapper, searchbarForm);
 
-    sidebar.append(todoList, searchbarForm, projectList);
+    sidebar.append(todoListWrapper, projectList);
 
     // project pane
     const projectPane = Object.assign(document.createElement('div'), {
@@ -319,6 +322,16 @@ const domManipulator = (() => {
     footer.appendChild(githubLink);
 
     content.append(header, mainContentWrapper, footer);
+  };
+
+  const updateTasks = () => {
+    const tasksList = document.getElementById('todolist');
+    // pull from localstorage here
+  };
+
+  const updateProjects = () => {
+    const projectList = document.getElementById('projectlist');
+    // pull from localstorage here
   };
 
   return { pageLoad };
