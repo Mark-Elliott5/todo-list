@@ -96,9 +96,19 @@ html, body {
     width: 100%;
 }
 
+.priorityfieldflexwrapper {
+    display: flex;
+    justify-content: space-evenly;
+    justify-items: center;
+    justify-self: center;
+    text-align: center;
+}
+
 .radiowrapper {
     display: flex;
     margin: 4px 0px;
+    flex-direction: column;
+    align-items: center;
 }
 
 footer, header {
