@@ -195,6 +195,10 @@ const domManipulator = (() => {
       console.log('refresh blocked');
       const submission = new FormData(e1.target);
       const title = submission.get('title');
+      if (storage.checkDuplicate(title)) {
+        alert('Project names must not be identical.');
+        return;
+      }
       const description = submission.get('description');
       const duedate = submission.get('duedate');
       const priority = submission.get('priority');
