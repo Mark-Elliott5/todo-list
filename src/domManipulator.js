@@ -195,8 +195,8 @@ const domManipulator = (() => {
       console.log('refresh blocked');
       const submission = new FormData(e1.target);
       const title = submission.get('title');
-      if (storage.checkDuplicate(title)) {
-        alert('Project names must not be identical.');
+      if (storage.checkDuplicate(title, type)) {
+        alert(`${type} names must not be identical.`);
         return;
       }
       const description = submission.get('description');
@@ -214,8 +214,9 @@ const domManipulator = (() => {
         storage.addProject(project);
       }
       if (type === 'Todo') {
-        Todo(title, description, duedate, priority, (id += 1));
+        const todo = Todo(title, description, duedate, priority, (id += 1));
         console.log(Todo(title, description, duedate, priority, (id += 1)));
+        storage.addTodo(todo);
       }
       const box = document.getElementById('createblocker');
       box.remove();

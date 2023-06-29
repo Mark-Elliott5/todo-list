@@ -1,18 +1,21 @@
 const storage = (() => {
-  // const projects = JSON.parse(localStorage.getItem('projects'));
-  const todos = JSON.parse(localStorage.getItem('todos'));
   const addProject = (project) => {
     const projects = JSON.parse(localStorage.getItem('projects')) || [];
     projects.push(project);
     localStorage.setItem('projects', JSON.stringify(projects));
   };
   const addTodo = (todo) => {
+    const todos = JSON.parse(localStorage.getItem('todos')) || [];
     todos.push(todo);
+    localStorage.setItem('todos', JSON.stringify(todos));
   };
 
-  const checkDuplicate = (title) => {
-    const projects = JSON.parse(localStorage.getItem('projects'));
-    return projects.some((element) => element.title === title);
+  const checkDuplicate = (title, type) => {
+    const items =
+      JSON.parse(
+        localStorage.getItem(type === 'Project' ? 'projects' : 'todos')
+      ) || [];
+    return items.some((element) => element.title === title);
   };
   // invoke localStorage here
   //     const getProject
