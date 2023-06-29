@@ -21,8 +21,8 @@ const Project = (title, description, duedate, priority, id) => {
     todos.push(todo);
   };
   const removeTodo = (input) => {
-    todos = todos.filter(element => element.id !== input);
-  }
+    todos = todos.filter((element) => element.id !== input);
+  };
 
   const obj = {
     title,

@@ -1,6 +1,7 @@
 import Icon from './images/github-mark-white.png';
 import Todo from './generateTodo';
 import Project from './generateProject';
+import storage from './storage';
 
 const domManipulator = (() => {
   let id = 0;
@@ -17,7 +18,7 @@ const domManipulator = (() => {
     });
     const createProjectHeading = Object.assign(document.createElement('h1'), {
       textContent: `Create a New ${type}`,
-      style: 'margin-top: 0;'
+      style: 'margin-top: 0;',
     });
     const createProjectForm = Object.assign(document.createElement('form'), {
       id: `createform`,
@@ -80,9 +81,12 @@ const domManipulator = (() => {
     const priorityFieldHeading = Object.assign(document.createElement('h1'), {
       textContent: 'Priority',
     });
-    const priorityFieldFlexWrapper = Object.assign(document.createElement('div'), {
-      classList: 'priorityfieldflexwrapper',
-    });
+    const priorityFieldFlexWrapper = Object.assign(
+      document.createElement('div'),
+      {
+        classList: 'priorityfieldflexwrapper',
+      }
+    );
     const priorityFieldLowWrapper = Object.assign(
       document.createElement('div'),
       {
@@ -172,10 +176,7 @@ const domManipulator = (() => {
       priorityFieldNormalWrapper,
       priorityFieldHighWrapper
     );
-    priorityFieldWrapper.append(
-      priorityFieldHeading,
-      priorityFieldFlexWrapper
-    );
+    priorityFieldWrapper.append(priorityFieldHeading, priorityFieldFlexWrapper);
 
     const submitNewProjectWrapper = document.createElement('div');
     const submitNewProjectButton = Object.assign(
@@ -198,11 +199,19 @@ const domManipulator = (() => {
       const duedate = submission.get('duedate');
       const priority = submission.get('priority');
       if (type === 'Project') {
-        Project(title, description, duedate, priority, id++);
-        console.log(Project(title, description, duedate, priority, id++));
-      } if (type === 'Todo') {
-        Todo(title, description, duedate, priority, id++);
-        console.log(Todo(title, description, duedate, priority, id++));  
+        const project = Project(
+          title,
+          description,
+          duedate,
+          priority,
+          (id += 1)
+        );
+        console.log(project);
+        storage.addProject(project);
+      }
+      if (type === 'Todo') {
+        Todo(title, description, duedate, priority, (id += 1));
+        console.log(Todo(title, description, duedate, priority, (id += 1)));
       }
       const box = document.getElementById('createblocker');
       box.remove();
