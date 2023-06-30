@@ -43,7 +43,7 @@ const storage = (() => {
   const checkDuplicate = (title, type) => {
     const items =
       JSON.parse(
-        localStorage.getItem(type === 'Project' ? 'projects' : 'todos')
+        localStorage.getItem(type === 'projects' ? 'projects' : 'todos')
       ) || [];
     return items.some((element) => element.title === title);
   };
