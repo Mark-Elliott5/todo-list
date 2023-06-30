@@ -281,18 +281,13 @@ const domManipulator = (() => {
       const description = submission.get('description');
       const duedate = submission.get('duedate');
       const priority = submission.get('priority');
-      if (type === 'Project') {
-        const project = Project(title, description, duedate, priority);
-        console.log(project);
-        storage.addProject(project);
-        updateList();
-      }
-      if (type === 'Todo') {
-        const todo = Todo(title, description, duedate, priority);
-        console.log(Todo(title, description, duedate, priority));
-        storage.addTodo(todo);
-        updateList();
-      }
+      const item =
+        type === 'projects'
+          ? Project(title, description, duedate, priority)
+          : Todo(title, description, duedate, priority);
+      console.log(item);
+      storage.addItem(item, type);
+      updateList();
       const box = document.getElementById('createblocker');
       box.remove();
     });
@@ -344,7 +339,7 @@ const domManipulator = (() => {
       id: 'createtodobutton',
       innerText: '+',
       classList: 'createbutton',
-      name: 'Todo',
+      name: 'todos',
     });
     createTodoButton.addEventListener('click', createNew);
     todoListHeaderWrapper.append(todosHeader, createTodoButton);
@@ -380,7 +375,7 @@ const domManipulator = (() => {
         id: 'createprojectbutton',
         innerText: '+',
         classList: 'createbutton',
-        name: 'Project',
+        name: 'projects',
       }
     );
     const projectList = Object.assign(document.createElement('div'), {
