@@ -1,14 +1,21 @@
-import gettersAndSetters from './gettersAndSetters';
-
-const Project = (title, description, duedate, priority, id, todos = []) => {
-  const obj = Object.assign(Object.create(gettersAndSetters), {
+const Project = (
+  title,
+  description,
+  duedate,
+  priority,
+  todos = [],
+  done = false,
+  project = true
+) => {
+  const obj = {
     title,
     description,
     duedate,
     priority,
     todos,
-    id,
-  });
+    project,
+    done,
+  };
   return obj;
 };
 

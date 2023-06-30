@@ -4,9 +4,55 @@ import Project from './generateProject';
 import storage from './storage';
 
 const domManipulator = (() => {
-  let id = 0;
-
-  const displayTodo = () => {};
+  const displayTodo = (element) => {
+    const projectpane = document.getElementById('projectpane');
+    projectpane.replaceChildren();
+    const container = document.createElement('div');
+    const header = Object.assign(document.createElement('h1'), {
+      textContent: element.title,
+    });
+    const description = Object.assign(document.createElement('p'), {
+      textContent: element.description,
+    });
+    const duedate = Object.assign(document.createElement('span'), {
+      textContent: element.duedate,
+    });
+    const priority = Object.assign(document.createElement('h1'), {
+      textContent: element.priority,
+    });
+    const status = Object.assign(document.createElement('span'), {
+      textContent: `${element.done === false ? 'Unfinished' : 'Finished'}`,
+    });
+    const deleteButton = Object.assign(document.createElement('button'), {
+      textContent: 'Delete',
+      value: element.title,
+    });
+    deleteButton.addEventListener('click', () => {
+      console.log('delete event');
+      storage.deleteTodo(deleteButton.value);
+      projectpane.replaceChildren();
+      updateList();
+    });
+    const markDone = Object.assign(document.createElement('button'), {
+      textContent: 'Mark Finished',
+      value: element.title,
+    });
+    markDone.addEventListener('click', () => {
+      storage.markDone(markDone.value, element.project);
+      updateList();
+      console.log('done status event');
+    });
+    container.append(
+      header,
+      description,
+      duedate,
+      priority,
+      status,
+      markDone,
+      deleteButton
+    );
+    projectpane.append(container);
+  };
 
   const createTab = (element, type) => {
     const list =
@@ -14,9 +60,13 @@ const domManipulator = (() => {
         ? document.getElementById('projectlist')
         : document.getElementById('todolist');
     const tab = Object.assign(document.createElement('div'), {
-      classList: 'tab',
+      classList: `tab ${element.priority} ${
+        element.done === true ? 'done' : ''
+      }`,
     });
-    tab.addEventListener('click', displayTodo);
+    tab.addEventListener('click', () => {
+      displayTodo(element);
+    });
     const tabHeader = Object.assign(document.createElement('h3'), {
       textContent: element.title,
     });
@@ -25,6 +75,10 @@ const domManipulator = (() => {
   };
 
   const updateList = () => {
+    const todoList = document.getElementById('todolist');
+    const projectList = document.getElementById('projectlist');
+    todoList.replaceChildren();
+    projectList.replaceChildren();
     const todos = storage.getTodos();
     const projects = storage.getProjects();
     todos.forEach((element) => createTab(element, 'todo'));
@@ -98,8 +152,7 @@ const domManipulator = (() => {
       id: `${type.toLowerCase()}duedate`,
       name: 'duedate',
       required: true,
-      maxLength: '40',
-      type: 'date',
+      type: 'datetime-local',
     });
     duedateFieldWrapper.append(duedateFieldLabel, duedateFieldInput);
 
@@ -229,21 +282,15 @@ const domManipulator = (() => {
       const duedate = submission.get('duedate');
       const priority = submission.get('priority');
       if (type === 'Project') {
-        const project = Project(
-          title,
-          description,
-          duedate,
-          priority,
-          (id += 1)
-        );
+        const project = Project(title, description, duedate, priority);
         console.log(project);
         storage.addProject(project);
       }
       if (type === 'Todo') {
-        const todo = Todo(title, description, duedate, priority, (id += 1));
-        console.log(Todo(title, description, duedate, priority, (id += 1)));
+        const todo = Todo(title, description, duedate, priority);
+        console.log(Todo(title, description, duedate, priority));
         storage.addTodo(todo);
-        updateTodosList();
+        updateList();
       }
       const box = document.getElementById('createblocker');
       box.remove();
@@ -312,8 +359,8 @@ const domManipulator = (() => {
     });
     searchbarForm.appendChild(searchbar);
 
-    const projectList = Object.assign(document.createElement('div'), {
-      id: 'projectlist',
+    const projectListWrapper = Object.assign(document.createElement('div'), {
+      id: 'projectlistwrapper',
     });
     const projectListHeaderWrapper = Object.assign(
       document.createElement('div'),
@@ -335,11 +382,18 @@ const domManipulator = (() => {
         name: 'Project',
       }
     );
+    const projectList = Object.assign(document.createElement('div'), {
+      id: 'projectlist',
+    });
     createProjectButton.addEventListener('click', createNew);
     projectListHeaderWrapper.append(projectListHeading, createProjectButton);
-    projectList.append(projectListHeaderWrapper, searchbarForm);
+    projectListWrapper.append(
+      projectListHeaderWrapper,
+      searchbarForm,
+      projectList
+    );
 
-    sidebar.append(todoListWrapper, projectList);
+    sidebar.append(todoListWrapper, projectListWrapper);
 
     // project pane
     const projectPane = Object.assign(document.createElement('div'), {
