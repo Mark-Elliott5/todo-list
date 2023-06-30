@@ -1,3 +1,5 @@
+import gettersAndSetters from './gettersAndSetters';
+
 const storage = (() => {
   const addProject = (project) => {
     const projects = JSON.parse(localStorage.getItem('projects')) || [];
@@ -17,6 +19,11 @@ const storage = (() => {
       ) || [];
     return items.some((element) => element.title === title);
   };
+
+  const getTodos = () => {
+    const todos = JSON.parse(localStorage.getItem('todos'));
+    return todos;
+  };
   // invoke localStorage here
   //     const getProject
   //     const setProject
@@ -34,7 +41,7 @@ const storage = (() => {
   //   const setTodoDescription
   //   const setTodoDueDate
   //   const setTodoPriority
-  return { addProject, addTodo, checkDuplicate };
+  return { addProject, addTodo, checkDuplicate, getTodos };
 })();
 
 export default storage;

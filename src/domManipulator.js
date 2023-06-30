@@ -5,6 +5,30 @@ import storage from './storage';
 
 const domManipulator = (() => {
   let id = 0;
+
+  const displayTodo = () => {};
+
+  const updateTodosList = () => {
+    const todosList = document.getElementById('todolist');
+    const todos = storage.getTodos();
+    const createTab = (element) => {
+      const todoTab = Object.assign(document.createElement('div'), {
+        classList: 'todotab',
+      });
+      todoTab.addEventListener('click', displayTodo);
+      const todoTabHeader = Object.assign(document.createElement('h3'), {
+        textContent: element.title,
+      });
+      todoTab.append(todoTabHeader);
+      todosList.append(todoTab);
+    };
+    todos.forEach((element) => createTab(element));
+  };
+
+  const updateProjectsList = () => {
+    const projectList = document.getElementById('projectlist');
+    // pull from localstorage here
+  };
   const createNew = (e) => {
     const type = e.target.name;
     console.log(`create new ${type}`);
@@ -217,6 +241,7 @@ const domManipulator = (() => {
         const todo = Todo(title, description, duedate, priority, (id += 1));
         console.log(Todo(title, description, duedate, priority, (id += 1)));
         storage.addTodo(todo);
+        updateTodosList();
       }
       const box = document.getElementById('createblocker');
       box.remove();
@@ -343,16 +368,8 @@ const domManipulator = (() => {
     footer.appendChild(githubLink);
 
     content.append(header, mainContentWrapper, footer);
-  };
-
-  const updateTasks = () => {
-    const tasksList = document.getElementById('todolist');
-    // pull from localstorage here
-  };
-
-  const updateProjects = () => {
-    const projectList = document.getElementById('projectlist');
-    // pull from localstorage here
+    updateTodosList();
+    // updateProjectsList();
   };
 
   return { pageLoad };
