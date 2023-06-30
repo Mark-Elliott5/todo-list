@@ -8,27 +8,29 @@ const domManipulator = (() => {
 
   const displayTodo = () => {};
 
-  const updateTodosList = () => {
-    const todosList = document.getElementById('todolist');
-    const todos = storage.getTodos();
-    const createTab = (element) => {
-      const todoTab = Object.assign(document.createElement('div'), {
-        classList: 'todotab',
-      });
-      todoTab.addEventListener('click', displayTodo);
-      const todoTabHeader = Object.assign(document.createElement('h3'), {
-        textContent: element.title,
-      });
-      todoTab.append(todoTabHeader);
-      todosList.append(todoTab);
-    };
-    todos.forEach((element) => createTab(element));
+  const createTab = (element, type) => {
+    const list =
+      type === 'project'
+        ? document.getElementById('projectlist')
+        : document.getElementById('todolist');
+    const tab = Object.assign(document.createElement('div'), {
+      classList: 'tab',
+    });
+    tab.addEventListener('click', displayTodo);
+    const tabHeader = Object.assign(document.createElement('h3'), {
+      textContent: element.title,
+    });
+    tab.append(tabHeader);
+    list.append(tab);
   };
 
-  const updateProjectsList = () => {
-    const projectList = document.getElementById('projectlist');
-    // pull from localstorage here
+  const updateList = () => {
+    const todos = storage.getTodos();
+    const projects = storage.getProjects();
+    todos.forEach((element) => createTab(element, 'todo'));
+    projects.forEach((element) => createTab(element, 'project'));
   };
+
   const createNew = (e) => {
     const type = e.target.name;
     console.log(`create new ${type}`);
@@ -368,8 +370,7 @@ const domManipulator = (() => {
     footer.appendChild(githubLink);
 
     content.append(header, mainContentWrapper, footer);
-    updateTodosList();
-    // updateProjectsList();
+    updateList();
   };
 
   return { pageLoad };

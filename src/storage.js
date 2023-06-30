@@ -24,6 +24,11 @@ const storage = (() => {
     const todos = JSON.parse(localStorage.getItem('todos'));
     return todos;
   };
+
+  const getProjects = () => {
+    const projects = JSON.parse(localStorage.getItem('projects'));
+    return projects;
+  };
   // invoke localStorage here
   //     const getProject
   //     const setProject
@@ -41,7 +46,7 @@ const storage = (() => {
   //   const setTodoDescription
   //   const setTodoDueDate
   //   const setTodoPriority
-  return { addProject, addTodo, checkDuplicate, getTodos };
+  return { addProject, addTodo, checkDuplicate, getTodos, getProjects };
 })();
 
 export default storage;
