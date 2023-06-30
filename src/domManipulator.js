@@ -97,7 +97,7 @@ const domManipulator = (() => {
       classList: 'createbox',
     });
     const createProjectHeading = Object.assign(document.createElement('h1'), {
-      textContent: `Create a New ${type}`,
+      textContent: `Create a New ${type === 'projects' ? 'Project' : 'Todo'}`,
       style: 'margin-top: 0;',
     });
     const createProjectForm = Object.assign(document.createElement('form'), {
@@ -108,7 +108,7 @@ const domManipulator = (() => {
     const titleFieldWrapper = document.createElement('div');
     const titleFieldLabel = Object.assign(document.createElement('label'), {
       for: `${type.toLowerCase()}name`,
-      textContent: `${type} Name`,
+      textContent: `${type === 'projects' ? 'Project' : 'Todo'} Name`,
     });
     const titleFieldInput = Object.assign(document.createElement('input'), {
       id: `${type}title`,
