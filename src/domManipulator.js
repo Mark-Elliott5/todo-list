@@ -29,7 +29,7 @@ const domManipulator = (() => {
     });
     deleteButton.addEventListener('click', () => {
       console.log('delete event');
-      storage.deleteTodo(deleteButton.value);
+      storage.deleteItem(deleteButton.value, element.project);
       projectpane.replaceChildren();
       updateList();
     });
@@ -285,6 +285,7 @@ const domManipulator = (() => {
         const project = Project(title, description, duedate, priority);
         console.log(project);
         storage.addProject(project);
+        updateList();
       }
       if (type === 'Todo') {
         const todo = Todo(title, description, duedate, priority);
