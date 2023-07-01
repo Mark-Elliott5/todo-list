@@ -4,52 +4,138 @@ import Project from './generateProject';
 import storage from './storage';
 
 const domManipulator = (() => {
+  const convertTime = (time) => {
+    const dateTime = new Date(time);
+    const options = {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: 'numeric',
+    };
+    const formattedDateTime = dateTime.toLocaleString('en-US', options);
+    return formattedDateTime;
+  };
+
   const displayTodo = (element) => {
     const projectpane = document.getElementById('projectpane');
     projectpane.replaceChildren();
     const container = document.createElement('div');
+
     const header = Object.assign(document.createElement('h1'), {
       textContent: element.title,
+      classList: 'todoheading',
     });
+
+    const descriptionDueDateWrapper = Object.assign(
+      document.createElement('div'),
+      { classList: 'descduewrapper' }
+    );
     const description = Object.assign(document.createElement('p'), {
       textContent: element.description,
+      classList: 'description',
     });
-    const duedate = Object.assign(document.createElement('span'), {
-      textContent: element.duedate,
+
+    const duedate = Object.assign(document.createElement('p'), {
+      textContent: `Due: ${convertTime(element.duedate)}`,
+      classList: 'duedate',
     });
-    const priority = Object.assign(document.createElement('h1'), {
-      textContent: element.priority,
+    descriptionDueDateWrapper.append(description, duedate);
+
+    const priorityWrapper = Object.assign(document.createElement('div'), {
+      id: 'prioritywrapper',
+    });
+    const priorityLabel = Object.assign(document.createElement('span'), {
+      textContent: `Priority:`,
+    });
+    const priority = Object.assign(document.createElement('span'), {
+      classList: `priority ${element.priority}`,
+      textContent: `${element.priority}`,
+    });
+    priority.addEventListener('click', () => {
+      const newPriority = storage.changePriority(
+        element.title,
+        element.project
+      );
+      priority.textContent = `${newPriority}`;
+      priority.classList = `priority ${newPriority}`;
+      updateList();
+    });
+    priorityWrapper.append(priorityLabel, priority);
+
+    const statusButtonsWrapper = Object.assign(document.createElement('div'), {
+      id: 'statusbuttonswrapper',
     });
     const status = Object.assign(document.createElement('span'), {
-      textContent: `${element.done === false ? 'Unfinished' : 'Finished'}`,
+      textContent: `Status: ${
+        element.done === false ? 'Incomplete' : 'Complete'
+      }`,
+    });
+
+    const buttonsWrapper = Object.assign(document.createElement('div'), {
+      classList: 'buttonswrapper',
     });
     const deleteButton = Object.assign(document.createElement('button'), {
-      textContent: 'Delete',
       value: element.title,
+      title: 'Delete',
     });
+    const deleteSVG = document.createElementNS(
+      'http://www.w3.org/2000/svg',
+      'svg'
+    );
+    deleteSVG.setAttribute('viewBox', '0 -960 960 960');
+    const deleteSVGPath = document.createElementNS(
+      'http://www.w3.org/2000/svg',
+      'path'
+    );
+    deleteSVGPath.setAttribute(
+      'd',
+      'M261-120q-24.75 0-42.375-17.625T201-180v-570h-41v-60h188v-30h264v30h188v60h-41v570q0 24-18 42t-42 18H261Zm438-630H261v570h438v-570ZM367-266h60v-399h-60v399Zm166 0h60v-399h-60v399ZM261-750v570-570Z'
+    );
+    deleteSVG.append(deleteSVGPath);
+    deleteButton.append(deleteSVG);
     deleteButton.addEventListener('click', () => {
       console.log('delete event');
       storage.deleteItem(deleteButton.value, element.project);
       projectpane.replaceChildren();
       updateList();
     });
+
     const markDone = Object.assign(document.createElement('button'), {
-      textContent: 'Mark Finished',
       value: element.title,
+      title: 'Mark Complete/Incomplete',
     });
     markDone.addEventListener('click', () => {
-      storage.markDone(markDone.value, element.project);
+      const newStatus = storage.markDone(markDone.value, element.project);
+      status.textContent = `Status: ${
+        newStatus === true ? 'Complete' : 'Incomplete'
+      }`;
       updateList();
       console.log('done status event');
     });
+    const markDoneSVG = document.createElementNS(
+      'http://www.w3.org/2000/svg',
+      'svg'
+    );
+    markDoneSVG.setAttribute('viewBox', '0 -960 960 960');
+    const markDoneSVGPath = document.createElementNS(
+      'http://www.w3.org/2000/svg',
+      'path'
+    );
+    markDoneSVGPath.setAttribute(
+      'd',
+      'M620-159 460-319l43-43 117 117 239-239 43 43-282 282Zm220-414h-60v-207h-60v90H240v-90h-60v600h251v60H180q-26 0-43-17t-17-43v-600q0-26 17-43t43-17h202q7-35 34.5-57.5T480-920q36 0 63.5 22.5T578-840h202q26 0 43 17t17 43v207ZM480-780q17 0 28.5-11.5T520-820q0-17-11.5-28.5T480-860q-17 0-28.5 11.5T440-820q0 17 11.5 28.5T480-780Z'
+    );
+    markDoneSVG.append(markDoneSVGPath);
+    markDone.append(markDoneSVG);
+
+    buttonsWrapper.append(markDone, deleteButton);
+    statusButtonsWrapper.append(status, buttonsWrapper);
     container.append(
       header,
-      description,
-      duedate,
-      priority,
-      status,
-      markDone,
-      deleteButton
+      descriptionDueDateWrapper,
+      priorityWrapper,
+      statusButtonsWrapper
     );
     projectpane.append(container);
   };
@@ -134,7 +220,7 @@ const domManipulator = (() => {
         id: `${type.toLowerCase()}description`,
         name: 'description',
         required: true,
-        maxLength: '40',
+        maxLength: '280',
         type: 'text',
       }
     );
@@ -280,6 +366,10 @@ const domManipulator = (() => {
       }
       const description = submission.get('description');
       const duedate = submission.get('duedate');
+      if (new Date().getTime() > new Date(duedate).getTime()) {
+        alert('Due date cannot be in the past.');
+        return;
+      }
       const priority = submission.get('priority');
       const item =
         type === 'projects'
@@ -340,20 +430,21 @@ const domManipulator = (() => {
       innerText: '+',
       classList: 'createbutton',
       name: 'todos',
+      title: 'Create Todo',
     });
     createTodoButton.addEventListener('click', createNew);
     todoListHeaderWrapper.append(todosHeader, createTodoButton);
     todoListWrapper.append(todoListHeaderWrapper, todoList);
 
-    const searchbarForm = Object.assign(document.createElement('form'), {
-      id: 'searchbarform',
-    });
-    const searchbar = Object.assign(document.createElement('input'), {
-      id: 'searchbar',
-      placeholder: '   Search Projects',
-      ariaLabel: 'Search Query',
-    });
-    searchbarForm.appendChild(searchbar);
+    // const searchbarForm = Object.assign(document.createElement('form'), {
+    //   id: 'searchbarform',
+    // });
+    // const searchbar = Object.assign(document.createElement('input'), {
+    //   id: 'searchbar',
+    //   placeholder: '   Search Projects',
+    //   ariaLabel: 'Search Query',
+    // });
+    // searchbarForm.appendChild(searchbar);
 
     const projectListWrapper = Object.assign(document.createElement('div'), {
       id: 'projectlistwrapper',
@@ -376,6 +467,7 @@ const domManipulator = (() => {
         innerText: '+',
         classList: 'createbutton',
         name: 'projects',
+        title: 'Create Project',
       }
     );
     const projectList = Object.assign(document.createElement('div'), {
@@ -385,24 +477,20 @@ const domManipulator = (() => {
     projectListHeaderWrapper.append(projectListHeading, createProjectButton);
     projectListWrapper.append(
       projectListHeaderWrapper,
-      searchbarForm,
+      // searchbarForm,
       projectList
     );
-
     sidebar.append(todoListWrapper, projectListWrapper);
 
-    // project pane
     const projectPane = Object.assign(document.createElement('div'), {
       id: 'projectpane',
     });
 
-    // main content wrapper
     const mainContentWrapper = Object.assign(document.createElement('div'), {
       id: 'maincontentwrapper',
     });
     mainContentWrapper.append(sidebar, projectPane);
 
-    // header and footer
     const header = Object.assign(document.createElement('header'), {
       textContent: 'Todo List',
     });

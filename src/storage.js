@@ -40,6 +40,7 @@ const storage = (() => {
     target.done = !target.done;
     console.log(list);
     localStorage.setItem(type, JSON.stringify(list));
+    return target.done;
   };
 
   const checkDuplicate = (title, type) => {
@@ -50,6 +51,29 @@ const storage = (() => {
     return items.some((element) => element.title === title);
   };
 
+  const changePriority = (name, project) => {
+    const [list, type] = project
+      ? [getProjects(), 'projects']
+      : [getTodos(), 'todos'];
+    // if (subtodo && project) {
+    //   const subtodoList = list.find(
+    //     (element) => element.title === 'Test9'
+    //   ).todos;
+    //   const target = subtodoList.find((element) => (element.name === subtodo));
+    // }
+    // if (!project)
+    const target = list.find((element) => element.title === name);
+    if (target.priority === 'low') {
+      target.priority = 'normal';
+    } else if (target.priority === 'normal') {
+      target.priority = 'high';
+    } else if (target.priority) {
+      target.priority = 'low';
+    }
+    localStorage.setItem(type, JSON.stringify(list));
+    return target.priority;
+  };
+
   return {
     addItem,
     checkDuplicate,
@@ -57,6 +81,7 @@ const storage = (() => {
     getProjects,
     markDone,
     deleteItem,
+    changePriority,
   };
 })();
 
