@@ -19,6 +19,7 @@ html, body {
     flex-direction: column;
     margin: 0;
     height: 100vh;
+    font-family: 'Roboto', sans-serif;
 }
 
 #maincontentwrapper {
@@ -66,6 +67,10 @@ html, body {
 
 #projectpane {
     grid-column: 2;
+}
+
+.tab {
+    margin: 4px 0px;
 }
 
 .tab.low {
