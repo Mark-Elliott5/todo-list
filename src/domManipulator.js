@@ -67,7 +67,7 @@ const domManipulator = (() => {
     tab.addEventListener('click', () => {
       displayTodo(element);
     });
-    const tabHeader = Object.assign(document.createElement('h3'), {
+    const tabHeader = Object.assign(document.createElement('span'), {
       textContent: element.title,
     });
     tab.append(tabHeader);

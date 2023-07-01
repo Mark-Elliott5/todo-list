@@ -23,8 +23,9 @@ const storage = (() => {
   };
 
   const deleteItem = (item, type) => {
-    const list = type === true ? getProjects() : getTodos();
-    const input = type === true ? 'projects' : 'todos';
+    const [list, input] = type
+      ? [getProjects(), 'projects']
+      : [getTodos(), 'todos'];
     localStorage.setItem(
       input,
       JSON.stringify(list.filter((element) => element.title !== item))
@@ -32,8 +33,9 @@ const storage = (() => {
   };
 
   const markDone = (name, project) => {
-    const list = project === true ? getProjects() : getTodos();
-    const type = project === true ? 'projects' : 'todos';
+    const [list, type] = project
+      ? [getProjects(), 'projects']
+      : [getTodos(), 'todos'];
     const target = list.find((element) => element.title === name);
     target.done = !target.done;
     console.log(list);
