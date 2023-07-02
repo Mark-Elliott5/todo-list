@@ -17,10 +17,14 @@ const domManipulator = (() => {
     return formattedDateTime;
   };
 
-  const displayTodo = (element) => {
+  const displayTodo = (element, clearPane = false) => {
     const projectpane = document.getElementById('projectpane');
-    projectpane.replaceChildren();
-    const container = document.createElement('div');
+    if (clearPane) {
+      projectpane.replaceChildren();
+    }
+    const container = Object.assign(document.createElement('div'), {
+      classList: 'todocontainer',
+    });
 
     const header = Object.assign(document.createElement('h1'), {
       textContent: element.title,
@@ -43,7 +47,7 @@ const domManipulator = (() => {
     descriptionDueDateWrapper.append(description, duedate);
 
     const priorityWrapper = Object.assign(document.createElement('div'), {
-      id: 'prioritywrapper',
+      classList: 'prioritywrapper',
     });
     const priorityLabel = Object.assign(document.createElement('span'), {
       textContent: `Priority:`,
@@ -64,7 +68,7 @@ const domManipulator = (() => {
     priorityWrapper.append(priorityLabel, priority);
 
     const statusButtonsWrapper = Object.assign(document.createElement('div'), {
-      id: 'statusbuttonswrapper',
+      classList: 'statusbuttonswrapper',
     });
     const status = Object.assign(document.createElement('span'), {
       textContent: `Status: ${
@@ -104,30 +108,43 @@ const domManipulator = (() => {
     const markDone = Object.assign(document.createElement('button'), {
       value: element.title,
       title: 'Mark Complete/Incomplete',
-    });
-    markDone.addEventListener('click', () => {
-      const newStatus = storage.markDone(markDone.value, element.project);
-      status.textContent = `Status: ${
-        newStatus === true ? 'Complete' : 'Incomplete'
-      }`;
-      updateList();
-      console.log('done status event');
+      classList: 'incomplete',
     });
     const markDoneSVG = document.createElementNS(
       'http://www.w3.org/2000/svg',
       'svg'
     );
-    markDoneSVG.setAttribute('viewBox', '0 -960 960 960');
+    markDoneSVG.setAttribute('viewBox', '0 0 24 24');
+    const markDoneSVGPathComplete =
+      'M19,3H14.82C14.4,1.84 13.3,1 12,1C10.7,1 9.6,1.84 9.18,3H5A2,2 0 0,0 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5A2,2 0 0,0 19,3M12,3A1,1 0 0,1 13,4A1,1 0 0,1 12,5A1,1 0 0,1 11,4A1,1 0 0,1 12,3M7,7H17V5H19V19H5V5H7V7M7.5,13.5L9,12L11,14L15.5,9.5L17,11L11,17L7.5,13.5Z';
+    const markDoneSVGPathIncomplete =
+      'M19 3H14.82C14.4 1.84 13.3 1 12 1S9.6 1.84 9.18 3H5C3.9 3 3 3.9 3 5V19C3 20.11 3.9 21 5 21H19C20.11 21 21 20.11 21 19V5C21 3.9 20.11 3 19 3M12 3C12.55 3 13 3.45 13 4S12.55 5 12 5 11 4.55 11 4 11.45 3 12 3M19 19H5V5H7V7H17V5H19V19M15.54 10.88L13.41 13L15.54 15.12L14.12 16.54L12 14.41L9.88 16.54L8.47 15.12L10.59 13L8.47 10.88L9.88 9.47L12 11.59L14.12 9.47L15.54 10.88Z';
     const markDoneSVGPath = document.createElementNS(
       'http://www.w3.org/2000/svg',
       'path'
     );
-    markDoneSVGPath.setAttribute(
-      'd',
-      'M620-159 460-319l43-43 117 117 239-239 43 43-282 282Zm220-414h-60v-207h-60v90H240v-90h-60v600h251v60H180q-26 0-43-17t-17-43v-600q0-26 17-43t43-17h202q7-35 34.5-57.5T480-920q36 0 63.5 22.5T578-840h202q26 0 43 17t17 43v207ZM480-780q17 0 28.5-11.5T520-820q0-17-11.5-28.5T480-860q-17 0-28.5 11.5T440-820q0 17 11.5 28.5T480-780Z'
-    );
+    markDoneSVGPath.setAttribute('d', markDoneSVGPathIncomplete);
     markDoneSVG.append(markDoneSVGPath);
     markDone.append(markDoneSVG);
+    markDone.addEventListener('click', () => {
+      const newStatus = `${
+        storage.markDone(markDone.value, element.project) === true
+          ? 'Complete'
+          : 'Incomplete'
+      }`;
+      status.textContent = `Status: ${newStatus}`;
+      markDone.classList = newStatus.toLowerCase();
+      markDoneSVGPath.setAttribute(
+        'd',
+        `${
+          newStatus === 'Complete'
+            ? markDoneSVGPathComplete
+            : markDoneSVGPathIncomplete
+        }`
+      );
+      updateList();
+      console.log('done status event');
+    });
 
     buttonsWrapper.append(markDone, deleteButton);
     statusButtonsWrapper.append(status, buttonsWrapper);
@@ -138,6 +155,152 @@ const domManipulator = (() => {
       statusButtonsWrapper
     );
     projectpane.append(container);
+  };
+
+  const displayProject = (element) => {
+    const projectpane = document.getElementById('projectpane');
+    projectpane.replaceChildren();
+    const container = Object.assign(document.createElement('div'), {
+      id: 'projectcontainer',
+    });
+
+    const header = Object.assign(document.createElement('h1'), {
+      textContent: element.title,
+      classList: 'pheading',
+    });
+    const description = Object.assign(document.createElement('p'), {
+      textContent: element.description,
+      classList: 'pdescription',
+    });
+    const headerDescriptionWrapper = Object.assign(
+      document.createElement('div'),
+      { id: 'pheaderdescwrapper' }
+    );
+    headerDescriptionWrapper.append(header, description);
+    const duedate = Object.assign(document.createElement('p'), {
+      textContent: `Due: ${convertTime(element.duedate)}`,
+      classList: 'pduedate',
+    });
+    const priorityWrapper = Object.assign(document.createElement('div'), {
+      classList: 'pprioritywrapper',
+    });
+    const priorityLabel = Object.assign(document.createElement('span'), {
+      textContent: `Priority:`,
+    });
+    const priority = Object.assign(document.createElement('span'), {
+      classList: `priority ${element.priority}`,
+      textContent: `${element.priority}`,
+    });
+    priority.addEventListener('click', () => {
+      const newPriority = storage.changePriority(
+        element.title,
+        element.project
+      );
+      priority.textContent = `${newPriority}`;
+      priority.classList = `priority ${newPriority}`;
+      updateList();
+    });
+    priorityWrapper.append(priorityLabel, priority);
+
+    const statusButtonsWrapper = Object.assign(document.createElement('div'), {
+      classList: 'statusbuttonswrapper',
+    });
+    const status = Object.assign(document.createElement('span'), {
+      textContent: `Status: ${
+        element.done === false ? 'Incomplete' : 'Complete'
+      }`,
+    });
+
+    const buttonsWrapper = Object.assign(document.createElement('div'), {
+      classList: 'buttonswrapper',
+    });
+    const deleteButton = Object.assign(document.createElement('button'), {
+      value: element.title,
+      title: 'Delete',
+    });
+    const deleteSVG = document.createElementNS(
+      'http://www.w3.org/2000/svg',
+      'svg'
+    );
+    deleteSVG.setAttribute('viewBox', '0 -960 960 960');
+    const deleteSVGPath = document.createElementNS(
+      'http://www.w3.org/2000/svg',
+      'path'
+    );
+    deleteSVGPath.setAttribute(
+      'd',
+      'M261-120q-24.75 0-42.375-17.625T201-180v-570h-41v-60h188v-30h264v30h188v60h-41v570q0 24-18 42t-42 18H261Zm438-630H261v570h438v-570ZM367-266h60v-399h-60v399Zm166 0h60v-399h-60v399ZM261-750v570-570Z'
+    );
+    deleteSVG.append(deleteSVGPath);
+    deleteButton.append(deleteSVG);
+    deleteButton.addEventListener('click', () => {
+      console.log('delete event');
+      storage.deleteItem(deleteButton.value, element.project);
+      projectpane.replaceChildren();
+      updateList();
+    });
+
+    const markDone = Object.assign(document.createElement('button'), {
+      value: element.title,
+      title: 'Mark Complete/Incomplete',
+      classList: 'incomplete',
+    });
+    const markDoneSVG = document.createElementNS(
+      'http://www.w3.org/2000/svg',
+      'svg'
+    );
+    markDoneSVG.setAttribute('viewBox', '0 0 24 24');
+    const markDoneSVGPathComplete =
+      'M19,3H14.82C14.4,1.84 13.3,1 12,1C10.7,1 9.6,1.84 9.18,3H5A2,2 0 0,0 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5A2,2 0 0,0 19,3M12,3A1,1 0 0,1 13,4A1,1 0 0,1 12,5A1,1 0 0,1 11,4A1,1 0 0,1 12,3M7,7H17V5H19V19H5V5H7V7M7.5,13.5L9,12L11,14L15.5,9.5L17,11L11,17L7.5,13.5Z';
+    const markDoneSVGPathIncomplete =
+      'M19 3H14.82C14.4 1.84 13.3 1 12 1S9.6 1.84 9.18 3H5C3.9 3 3 3.9 3 5V19C3 20.11 3.9 21 5 21H19C20.11 21 21 20.11 21 19V5C21 3.9 20.11 3 19 3M12 3C12.55 3 13 3.45 13 4S12.55 5 12 5 11 4.55 11 4 11.45 3 12 3M19 19H5V5H7V7H17V5H19V19M15.54 10.88L13.41 13L15.54 15.12L14.12 16.54L12 14.41L9.88 16.54L8.47 15.12L10.59 13L8.47 10.88L9.88 9.47L12 11.59L14.12 9.47L15.54 10.88Z';
+    const markDoneSVGPath = document.createElementNS(
+      'http://www.w3.org/2000/svg',
+      'path'
+    );
+    markDoneSVGPath.setAttribute('d', markDoneSVGPathIncomplete);
+    markDoneSVG.append(markDoneSVGPath);
+    markDone.append(markDoneSVG);
+    markDone.addEventListener('click', () => {
+      const newStatus = `${
+        storage.markDone(markDone.value, element.project) === true
+          ? 'Complete'
+          : 'Incomplete'
+      }`;
+      status.textContent = `Status: ${newStatus}`;
+      markDone.classList = newStatus.toLowerCase();
+      markDoneSVGPath.setAttribute(
+        'd',
+        `${
+          newStatus === 'Complete'
+            ? markDoneSVGPathComplete
+            : markDoneSVGPathIncomplete
+        }`
+      );
+      updateList();
+      console.log('done status event');
+    });
+
+    buttonsWrapper.append(markDone, deleteButton);
+    statusButtonsWrapper.append(status, buttonsWrapper);
+    const duedatePriorityButtonsWrapper = Object.assign(
+      document.createElement('div'),
+      {
+        id: 'duedateprioritybuttonswrapper',
+      }
+    );
+    duedatePriorityButtonsWrapper.append(
+      duedate,
+      priorityWrapper,
+      buttonsWrapper
+    );
+    container.append(headerDescriptionWrapper, duedatePriorityButtonsWrapper);
+    projectpane.append(container);
+    const projectList = storage.getProjects();
+    const { todos } = projectList.find((e) => e.title === element.title);
+    todos.forEach((e) => {
+      displayTodo(e);
+    });
   };
 
   const createTab = (element, type) => {
@@ -151,7 +314,11 @@ const domManipulator = (() => {
       }`,
     });
     tab.addEventListener('click', () => {
-      displayTodo(element);
+      if (type === 'todo') {
+        displayTodo(element, true);
+      } else if (type === 'project') {
+        displayProject(element);
+      }
     });
     const tabHeader = Object.assign(document.createElement('span'), {
       textContent: element.title,
@@ -220,7 +387,7 @@ const domManipulator = (() => {
         id: `${type.toLowerCase()}description`,
         name: 'description',
         required: true,
-        maxLength: '280',
+        maxLength: `${type === 'projects' ? '40' : '280'}`,
         type: 'text',
       }
     );
@@ -404,7 +571,6 @@ const domManipulator = (() => {
   };
 
   const pageLoad = () => {
-    // sidebar
     const content = document.getElementById('content');
     const sidebar = Object.assign(document.createElement('div'), {
       id: 'sidebar',

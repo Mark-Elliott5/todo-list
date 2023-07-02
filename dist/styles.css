@@ -107,7 +107,7 @@ html, body {
     text-decoration: underline var(--high-priority);
 }
 
-#statusbuttonswrapper {
+.statusbuttonswrapper {
     display: flex;
     justify-content: space-between;
 }
@@ -133,7 +133,7 @@ html, body {
     background: linear-gradient(to left, var(--primary-color) -25px, #ffffff00 40px);
 }
 
-#prioritywrapper, #statusbuttonswrapper {
+.prioritywrapper, .statusbuttonswrapper {
     margin: 0px 0px 0px 16px;
 }
 
@@ -146,6 +146,38 @@ html, body {
 svg {
     width: 32px;
     height: 32px;
+}
+
+.todocontainer, #projectcontainer {
+    border-bottom: 1px solid gray;
+}
+
+#projectcontainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#pheaderdescwrapper, #duedateprioritybuttonswrapper {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+#pheaderdescwrapper {
+    margin: 8px 0px 0px 16px;
+}
+
+.pdescription {
+    font-style: italic;
+}
+
+.incomplete {
+    background: var(--high-priority);
+}
+
+.complete {
+    background: var(--low-priority);
 }
 
 .blocker {
