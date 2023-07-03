@@ -4,64 +4,36 @@ const storage = (() => {
     return todos;
   };
 
-  const getProjects = () => {
-    const projects = JSON.parse(localStorage.getItem('projects'));
-    return projects;
-  };
-
-  const addItem = (item, type) => {
-    let list;
-    if (type === 'projects') {
-      list = JSON.parse(localStorage.getItem('projects'));
-    } else if (type === 'todos') {
-      list = JSON.parse(localStorage.getItem('todos'));
-    } else {
-      list = [];
-    }
+  const addItem = (item) => {
+    const list = getTodos() || [];
     list.push(item);
-    localStorage.setItem(type, JSON.stringify(list));
+    localStorage.setItem('todos', JSON.stringify(list));
   };
 
-  const deleteItem = (item, type) => {
-    const [list, input] = type
-      ? [getProjects(), 'projects']
-      : [getTodos(), 'todos'];
+  const deleteItem = (item) => {
+    const list = getTodos();
     localStorage.setItem(
-      input,
+      'todos',
       JSON.stringify(list.filter((element) => element.title !== item))
     );
   };
 
-  const markDone = (name, project) => {
-    const [list, type] = project
-      ? [getProjects(), 'projects']
-      : [getTodos(), 'todos'];
+  const markDone = (name) => {
+    const list = getTodos();
     const target = list.find((element) => element.title === name);
     target.done = !target.done;
     console.log(list);
-    localStorage.setItem(type, JSON.stringify(list));
+    localStorage.setItem('todos', JSON.stringify(list));
     return target.done;
   };
 
-  const checkDuplicate = (title, type) => {
-    const items =
-      JSON.parse(
-        localStorage.getItem(type === 'projects' ? 'projects' : 'todos')
-      ) || [];
+  const checkDuplicate = (title) => {
+    const items = getTodos() || [];
     return items.some((element) => element.title === title);
   };
 
-  const changePriority = (name, project) => {
-    const [list, type] = project
-      ? [getProjects(), 'projects']
-      : [getTodos(), 'todos'];
-    // if (subtodo && project) {
-    //   const subtodoList = list.find(
-    //     (element) => element.title === 'Test9'
-    //   ).todos;
-    //   const target = subtodoList.find((element) => (element.name === subtodo));
-    // }
-    // if (!project)
+  const changePriority = (name) => {
+    const list = getTodos();
     const target = list.find((element) => element.title === name);
     if (target.priority === 'low') {
       target.priority = 'normal';
@@ -70,7 +42,7 @@ const storage = (() => {
     } else if (target.priority) {
       target.priority = 'low';
     }
-    localStorage.setItem(type, JSON.stringify(list));
+    localStorage.setItem('todos', JSON.stringify(list));
     return target.priority;
   };
 
@@ -78,7 +50,6 @@ const storage = (() => {
     addItem,
     checkDuplicate,
     getTodos,
-    getProjects,
     markDone,
     deleteItem,
     changePriority,
