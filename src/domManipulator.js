@@ -47,7 +47,7 @@ const domManipulator = (() => {
       classList: 'prioritywrapper',
     });
     const priorityLabel = Object.assign(document.createElement('span'), {
-      textContent: `Priority:`,
+      textContent: `Priority: `,
     });
     const priority = Object.assign(document.createElement('span'), {
       classList: `priority ${element.priority}`,
