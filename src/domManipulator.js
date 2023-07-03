@@ -17,11 +17,9 @@ const domManipulator = (() => {
     return formattedDateTime;
   };
 
-  const displayTodo = (element, clearPane = false) => {
+  const displayTodo = (element) => {
     const projectpane = document.getElementById('projectpane');
-    if (clearPane) {
-      projectpane.replaceChildren();
-    }
+    // projectpane.replaceChildren();
     const container = Object.assign(document.createElement('div'), {
       classList: 'todocontainer',
     });
@@ -315,7 +313,7 @@ const domManipulator = (() => {
     });
     tab.addEventListener('click', () => {
       if (type === 'todo') {
-        displayTodo(element, true);
+        displayTodo(element);
       } else if (type === 'project') {
         displayProject(element);
       }
