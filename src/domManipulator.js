@@ -51,7 +51,9 @@ const domManipulator = (() => {
     });
     const priority = Object.assign(document.createElement('span'), {
       classList: `priority ${element.priority}`,
-      textContent: `${element.priority}`,
+      textContent: `${
+        element.priority.charAt(0).toUpperCase() + element.priority.slice(1)
+      }`,
     });
     priority.addEventListener('click', () => {
       const newPriority = storage.changePriority(
