@@ -148,28 +148,8 @@ svg {
     height: 32px;
 }
 
-.todocontainer, #projectcontainer {
+.todocontainer {
     border-bottom: 1px solid gray;
-}
-
-#projectcontainer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-#pheaderdescwrapper, #duedateprioritybuttonswrapper {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-}
-
-#pheaderdescwrapper {
-    margin: 8px 0px 0px 16px;
-}
-
-.pdescription {
-    font-style: italic;
 }
 
 .incomplete {
