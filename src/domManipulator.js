@@ -17,7 +17,7 @@ const domManipulator = (() => {
     return formattedDateTime;
   };
 
-  const displayTodo = (element) => {
+  const displayTodo = (element, projectName) => {
     const projectpane = document.getElementById('projectpane');
     // projectpane.replaceChildren();
     const container = Object.assign(document.createElement('div'), {
@@ -80,6 +80,7 @@ const domManipulator = (() => {
     const deleteButton = Object.assign(document.createElement('button'), {
       value: element.title,
       title: 'Delete',
+      project: projectName,
     });
     const deleteSVG = document.createElementNS(
       'http://www.w3.org/2000/svg',
@@ -96,17 +97,24 @@ const domManipulator = (() => {
     );
     deleteSVG.append(deleteSVGPath);
     deleteButton.append(deleteSVG);
-    deleteButton.addEventListener('click', () => {
+    deleteButton.addEventListener('click', (e) => {
       console.log('delete event');
-      storage.deleteItem(deleteButton.value, element.project);
-      projectpane.replaceChildren();
+      storage.deleteItem(deleteButton.value, deleteButton.project);
+      let currentNode = e.target;
+      while (currentNode !== null) {
+        if (currentNode.classList.contains('todocontainer')) {
+          currentNode.remove();
+          break;
+        }
+        currentNode = currentNode.parentNode;
+      }
       updateList();
     });
 
     const markDone = Object.assign(document.createElement('button'), {
       value: element.title,
       title: 'Mark Complete/Incomplete',
-      classList: 'incomplete',
+      classList: `${element.done ? 'complete' : 'incomplete'}`,
     });
     const markDoneSVG = document.createElementNS(
       'http://www.w3.org/2000/svg',
@@ -198,7 +206,19 @@ const domManipulator = (() => {
       priority.classList = `priority ${newPriority}`;
       updateList();
     });
-    priorityWrapper.append(priorityLabel, priority);
+    const createSubtodoButton = Object.assign(
+      document.createElement('button'),
+      {
+        id: 'createsubtodobutton',
+        innerText: '+',
+        classList: 'createbutton',
+        name: 'subtodo',
+        title: 'Create Todo',
+        value: `${element.title}`,
+      }
+    );
+    createSubtodoButton.addEventListener('click', createNew);
+    priorityWrapper.append(priorityLabel, priority, createSubtodoButton);
 
     const statusButtonsWrapper = Object.assign(document.createElement('div'), {
       classList: 'statusbuttonswrapper',
@@ -234,14 +254,13 @@ const domManipulator = (() => {
     deleteButton.addEventListener('click', () => {
       console.log('delete event');
       storage.deleteItem(deleteButton.value, element.project);
-      projectpane.replaceChildren();
       updateList();
     });
 
     const markDone = Object.assign(document.createElement('button'), {
       value: element.title,
       title: 'Mark Complete/Incomplete',
-      classList: 'incomplete',
+      classList: `${element.done ? 'complete' : 'incomplete'}`,
     });
     const markDoneSVG = document.createElementNS(
       'http://www.w3.org/2000/svg',
@@ -297,7 +316,7 @@ const domManipulator = (() => {
     const projectList = storage.getProjects();
     const { todos } = projectList.find((e) => e.title === element.title);
     todos.forEach((e) => {
-      displayTodo(e);
+      displayTodo(e, element.title);
     });
   };
 
@@ -326,13 +345,13 @@ const domManipulator = (() => {
   };
 
   const updateList = () => {
-    const todoList = document.getElementById('todolist');
+    // const todoList = document.getElementById('todolist');
     const projectList = document.getElementById('projectlist');
-    todoList.replaceChildren();
+    // todoList.replaceChildren();
     projectList.replaceChildren();
-    const todos = storage.getTodos();
+    // const todos = storage.getTodos();
     const projects = storage.getProjects();
-    todos.forEach((element) => createTab(element, 'todo'));
+    // todos.forEach((element) => createTab(element, 'todo'));
     projects.forEach((element) => createTab(element, 'project'));
   };
 
@@ -358,8 +377,8 @@ const domManipulator = (() => {
 
     const titleFieldWrapper = document.createElement('div');
     const titleFieldLabel = Object.assign(document.createElement('label'), {
-      for: `${type.toLowerCase()}name`,
-      textContent: `${type === 'projects' ? 'Project' : 'Todo'} Name`,
+      for: `${type}name`,
+      textContent: `${type} Name`,
     });
     const titleFieldInput = Object.assign(document.createElement('input'), {
       id: `${type}title`,
@@ -375,17 +394,17 @@ const domManipulator = (() => {
     const descriptionFieldLabel = Object.assign(
       document.createElement('label'),
       {
-        for: `${type.toLowerCase()}description`,
+        for: `${type}description`,
         textContent: 'Description',
       }
     );
     const descriptionFieldInput = Object.assign(
       document.createElement('input'),
       {
-        id: `${type.toLowerCase()}description`,
+        id: `${type}description`,
         name: 'description',
         required: true,
-        maxLength: `${type === 'projects' ? '40' : '280'}`,
+        maxLength: `${type === 'project' ? '40' : '280'}`,
         type: 'text',
       }
     );
@@ -396,11 +415,11 @@ const domManipulator = (() => {
 
     const duedateFieldWrapper = document.createElement('div');
     const duedateFieldLabel = Object.assign(document.createElement('label'), {
-      for: `${type.toLowerCase()}duedate`,
+      for: `${type}duedate`,
       textContent: 'Due Date',
     });
     const duedateFieldInput = Object.assign(document.createElement('input'), {
-      id: `${type.toLowerCase()}duedate`,
+      id: `${type}duedate`,
       name: 'duedate',
       required: true,
       type: 'datetime-local',
@@ -433,7 +452,7 @@ const domManipulator = (() => {
     const priorityFieldInputLow = Object.assign(
       document.createElement('input'),
       {
-        id: `${type.toLowerCase()}prioritylow`,
+        id: `${type}prioritylow`,
         name: 'priority',
         required: true,
         type: 'radio',
@@ -454,14 +473,14 @@ const domManipulator = (() => {
     const priorityFieldLabelNormal = Object.assign(
       document.createElement('label'),
       {
-        for: `${type.toLowerCase()}prioritynormal`,
+        for: `${type}prioritynormal`,
         textContent: 'Normal',
       }
     );
     const priorityFieldInputNormal = Object.assign(
       document.createElement('input'),
       {
-        id: `${type.toLowerCase()}prioritynormal`,
+        id: `${type}prioritynormal`,
         name: 'priority',
         required: true,
         type: 'radio',
@@ -482,14 +501,14 @@ const domManipulator = (() => {
     const priorityFieldLabelHigh = Object.assign(
       document.createElement('label'),
       {
-        for: `${type.toLowerCase()}priorityhigh`,
+        for: `${type}priorityhigh`,
         textContent: 'High',
       }
     );
     const priorityFieldInputHigh = Object.assign(
       document.createElement('input'),
       {
-        id: `${type.toLowerCase()}priorityhigh`,
+        id: `${type}priorityhigh`,
         name: 'priority',
         required: true,
         type: 'radio',
@@ -520,38 +539,30 @@ const domManipulator = (() => {
     );
     submitNewProjectWrapper.append(submitNewProjectButton);
 
-    createProjectForm.addEventListener('submit', (e1) => {
-      e1.preventDefault();
-      console.log('refresh blocked');
-      const submission = new FormData(e1.target);
-      const title = submission.get('title');
-      if (storage.checkDuplicate(title, type)) {
-        alert(`${type} names must not be identical.`);
-        return;
-      }
-      const description = submission.get('description');
-      const duedate = submission.get('duedate');
-      if (new Date().getTime() > new Date(duedate).getTime()) {
-        alert('Due date cannot be in the past.');
-        return;
-      }
-      const priority = submission.get('priority');
-      const item =
-        type === 'projects'
-          ? Project(title, description, duedate, priority)
-          : Todo(title, description, duedate, priority);
-      console.log(item);
-      storage.addItem(item, type);
-      updateList();
-      const box = document.getElementById('createblocker');
-      box.remove();
+    const hiddenTypeValue = Object.assign(document.createElement('input'), {
+      id: 'type',
+      name: 'type',
+      type: 'hidden',
+      value: `${type}`,
     });
+
+    let subtodoHiddenValue;
+    if (type === 'subtodo') {
+      subtodoHiddenValue = Object.assign(document.createElement('input'), {
+        id: 'subtodohiddenvalue',
+        name: 'projectname',
+        type: 'hidden',
+        value: `${e.target.value}`,
+      });
+    }
 
     createProjectForm.append(
       titleFieldWrapper,
       descriptionFieldWrapper,
       duedateFieldWrapper,
       priorityFieldWrapper,
+      hiddenTypeValue,
+      subtodoHiddenValue,
       submitNewProjectWrapper
     );
 
@@ -566,6 +577,49 @@ const domManipulator = (() => {
     });
     const content = document.getElementById('content');
     content.append(createProjectBlocker);
+
+    createProjectForm.addEventListener('submit', submitData);
+  };
+
+  const submitData = (e) => {
+    e.preventDefault();
+    console.log('refresh blocked');
+    const submission = new FormData(e.target);
+    const type = submission.get('type');
+    const title = submission.get('title');
+    const projectName = submission.get('projectname');
+    if (storage.checkDuplicate(title, type, projectName)) {
+      alert(`${type} names must not be identical.`);
+      return;
+    }
+    const description = submission.get('description');
+    const duedate = submission.get('duedate');
+    if (new Date().getTime() > new Date(duedate).getTime()) {
+      alert('Due date cannot be in the past.');
+      return;
+    }
+    const priority = submission.get('priority');
+    const subtodo = submission.get('subtodo');
+    const item =
+      type === 'projects'
+        ? Project(title, description, duedate, priority)
+        : Todo(title, description, duedate, priority, subtodo);
+    console.log(item);
+    if (type === 'subtodo') {
+      storage.addSubtodo(item, projectName);
+      const projectList = storage.getProjects();
+      const { todos } = projectList.find((e1) => e1.title === projectName);
+      const childTodos = document.getElementsByClassName('todocontainer');
+      childTodos.remove();
+      todos.forEach((e2) => {
+        displayTodo(e2);
+      });
+    } else {
+      storage.addItem(item, type);
+    }
+    updateList();
+    const box = document.getElementById('createblocker');
+    box.remove();
   };
 
   const pageLoad = () => {
@@ -574,31 +628,31 @@ const domManipulator = (() => {
       id: 'sidebar',
     });
 
-    const todoListWrapper = Object.assign(document.createElement('div'), {
-      id: 'todolistwrapper',
-    });
-    const todoListHeaderWrapper = Object.assign(document.createElement('div'), {
-      id: 'todolistheaderwrapper',
-      classList: 'listwrapper',
-    });
-    const todosHeader = Object.assign(document.createElement('h2'), {
-      id: 'todosheader',
-      classList: 'header',
-      textContent: 'Todos',
-    });
-    const todoList = Object.assign(document.createElement('div'), {
-      id: 'todolist',
-    });
-    const createTodoButton = Object.assign(document.createElement('button'), {
-      id: 'createtodobutton',
-      innerText: '+',
-      classList: 'createbutton',
-      name: 'todos',
-      title: 'Create Todo',
-    });
-    createTodoButton.addEventListener('click', createNew);
-    todoListHeaderWrapper.append(todosHeader, createTodoButton);
-    todoListWrapper.append(todoListHeaderWrapper, todoList);
+    // const todoListWrapper = Object.assign(document.createElement('div'), {
+    //   id: 'todolistwrapper',
+    // });
+    // const todoListHeaderWrapper = Object.assign(document.createElement('div'), {
+    //   id: 'todolistheaderwrapper',
+    //   classList: 'listwrapper',
+    // });
+    // const todosHeader = Object.assign(document.createElement('h2'), {
+    //   id: 'todosheader',
+    //   classList: 'header',
+    //   textContent: 'Todos',
+    // });
+    // const todoList = Object.assign(document.createElement('div'), {
+    //   id: 'todolist',
+    // });
+    // const createTodoButton = Object.assign(document.createElement('button'), {
+    //   id: 'createtodobutton',
+    //   innerText: '+',
+    //   classList: 'createbutton',
+    //   name: 'todo',
+    //   title: 'Create Todo',
+    // });
+    // createTodoButton.addEventListener('click', createNew);
+    // todoListHeaderWrapper.append(todosHeader, createTodoButton);
+    // todoListWrapper.append(todoListHeaderWrapper, todoList);
 
     // const searchbarForm = Object.assign(document.createElement('form'), {
     //   id: 'searchbarform',
@@ -630,7 +684,7 @@ const domManipulator = (() => {
         id: 'createprojectbutton',
         innerText: '+',
         classList: 'createbutton',
-        name: 'projects',
+        name: 'project',
         title: 'Create Project',
       }
     );
@@ -644,7 +698,7 @@ const domManipulator = (() => {
       // searchbarForm,
       projectList
     );
-    sidebar.append(todoListWrapper, projectListWrapper);
+    sidebar.append(projectListWrapper);
 
     const projectPane = Object.assign(document.createElement('div'), {
       id: 'projectpane',

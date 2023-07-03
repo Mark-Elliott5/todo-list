@@ -3,6 +3,7 @@ const Todo = (
   description,
   duedate,
   priority,
+  subtodo,
   project = false,
   done = false
 ) => {
@@ -11,6 +12,7 @@ const Todo = (
     description,
     duedate,
     priority,
+    subtodo,
     project,
     done,
   };

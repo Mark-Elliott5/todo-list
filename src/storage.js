@@ -9,12 +9,27 @@ const storage = (() => {
     return projects;
   };
 
+  const getSubtodos = (project) => {
+    const projects = getProjects();
+    const target = projects.find((element) => element.title === project);
+    const subtodos = target.todos;
+    return subtodos;
+  };
+
+  const addSubtodo = (item, project) => {
+    const projects = getProjects();
+    const target = projects.find((element) => element.title === project);
+    const subtodos = target.todos;
+    subtodos.push(item);
+    localStorage.setItem('projects', JSON.stringify(projects));
+  };
+
   const addItem = (item, type) => {
     let list;
-    if (type === 'projects') {
-      list = JSON.parse(localStorage.getItem('projects'));
-    } else if (type === 'todos') {
-      list = JSON.parse(localStorage.getItem('todos'));
+    if (type === 'project') {
+      list = getProjects();
+    } else if (type === 'todo') {
+      list = getTodos();
     } else {
       list = [];
     }
@@ -22,14 +37,13 @@ const storage = (() => {
     localStorage.setItem(type, JSON.stringify(list));
   };
 
-  const deleteItem = (item, type) => {
-    const [list, input] = type
-      ? [getProjects(), 'projects']
-      : [getTodos(), 'todos'];
-    localStorage.setItem(
-      input,
-      JSON.stringify(list.filter((element) => element.title !== item))
+  const deleteItem = (todoName, projectName) => {
+    const list = getProjects();
+    const project = list.find((element) => element.title === projectName);
+    project.todos = project.todos.filter(
+      (element) => element.title !== todoName
     );
+    localStorage.setItem('projects', JSON.stringify(list));
   };
 
   const markDone = (name, project) => {
@@ -43,11 +57,17 @@ const storage = (() => {
     return target.done;
   };
 
-  const checkDuplicate = (title, type) => {
-    const items =
-      JSON.parse(
-        localStorage.getItem(type === 'projects' ? 'projects' : 'todos')
-      ) || [];
+  const checkDuplicate = (title, type, project) => {
+    let items;
+    if (type === 'project') {
+      items = getProjects();
+    } else if (type === 'todo') {
+      items = getTodos();
+    } else if (type === 'subtodo') {
+      items = getSubtodos(project);
+    } else {
+      items = [];
+    }
     return items.some((element) => element.title === title);
   };
 
@@ -82,6 +102,7 @@ const storage = (() => {
     markDone,
     deleteItem,
     changePriority,
+    addSubtodo,
   };
 })();
 
