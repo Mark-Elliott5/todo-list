@@ -22,7 +22,6 @@ const storage = (() => {
     const list = getTodos();
     const target = list.find((element) => element.title === name);
     target.done = !target.done;
-    console.log(list);
     localStorage.setItem('todos', JSON.stringify(list));
     return target.done;
   };

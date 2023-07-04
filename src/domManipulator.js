@@ -16,6 +16,32 @@ const domManipulator = (() => {
     return formattedDateTime;
   };
 
+  const createTab = (element, type) => {
+    const list = document.getElementById('todolist');
+    const tab = Object.assign(document.createElement('div'), {
+      classList: `tab ${element.priority} ${
+        element.done === true ? 'done' : ''
+      }`,
+    });
+    tab.addEventListener('click', () => {
+      if (type === 'todo') {
+        displayTodo(element);
+      }
+    });
+    const tabHeader = Object.assign(document.createElement('span'), {
+      textContent: element.title,
+    });
+    tab.append(tabHeader);
+    list.append(tab);
+  };
+
+  const updateList = () => {
+    const todoList = document.getElementById('todolist');
+    todoList.replaceChildren();
+    const todos = storage.getTodos();
+    todos.forEach((element) => createTab(element, 'todo'));
+  };
+
   const displayTodo = (element) => {
     const projectpane = document.getElementById('projectpane');
     projectpane.replaceChildren();
@@ -100,7 +126,6 @@ const domManipulator = (() => {
     deleteSVG.append(deleteSVGPath);
     deleteButton.append(deleteSVG);
     deleteButton.addEventListener('click', () => {
-      console.log('delete event');
       storage.deleteItem(deleteButton.value);
       projectpane.replaceChildren();
       updateList();
@@ -144,7 +169,6 @@ const domManipulator = (() => {
         }`
       );
       updateList();
-      console.log('done status event');
     });
 
     buttonsWrapper.append(markDone, deleteButton);
@@ -158,35 +182,8 @@ const domManipulator = (() => {
     projectpane.append(container);
   };
 
-  const createTab = (element, type) => {
-    const list = document.getElementById('todolist');
-    const tab = Object.assign(document.createElement('div'), {
-      classList: `tab ${element.priority} ${
-        element.done === true ? 'done' : ''
-      }`,
-    });
-    tab.addEventListener('click', () => {
-      if (type === 'todo') {
-        displayTodo(element);
-      }
-    });
-    const tabHeader = Object.assign(document.createElement('span'), {
-      textContent: element.title,
-    });
-    tab.append(tabHeader);
-    list.append(tab);
-  };
-
-  const updateList = () => {
-    const todoList = document.getElementById('todolist');
-    todoList.replaceChildren();
-    const todos = storage.getTodos();
-    todos.forEach((element) => createTab(element, 'todo'));
-  };
-
   const createNew = (e) => {
     const type = e.target.name;
-    console.log(`create new ${type}`);
     const createProjectBlocker = Object.assign(document.createElement('div'), {
       id: `createblocker`,
       classList: 'blocker',
@@ -370,7 +367,6 @@ const domManipulator = (() => {
 
     createProjectForm.addEventListener('submit', (e1) => {
       e1.preventDefault();
-      console.log('refresh blocked');
       const submission = new FormData(e1.target);
       const title = submission.get('title');
       if (storage.checkDuplicate(title, type)) {
@@ -385,7 +381,6 @@ const domManipulator = (() => {
       }
       const priority = submission.get('priority');
       const item = Todo(title, description, duedate, priority);
-      console.log(item);
       storage.addItem(item, type);
       updateList();
       const box = document.getElementById('createblocker');
