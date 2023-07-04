@@ -60,7 +60,9 @@ const domManipulator = (() => {
         element.title,
         element.project
       );
-      priority.textContent = `${newPriority}`;
+      priority.textContent = `${
+        newPriority.charAt(0).toUpperCase() + newPriority.slice(1)
+      }`;
       priority.classList = `priority ${newPriority}`;
       updateList();
     });
